@@ -1,0 +1,15 @@
+# Changelog
+
+## 2021-12-24
+
+first commit
+
+### New Features
+
+- add zbhci driver
+- add zigbee2mqtt examples
+
+### New supported devices
+
+- Xiaomi RTCGQ11LM
+- Xiaomi WSDCGQ11LM
