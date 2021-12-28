@@ -1,6 +1,0 @@
-{
-    "files.associations": {
-        "app_db.h": "c",
-        "zigbee2mqtt_main.c": "cpp"
-    }
-}
