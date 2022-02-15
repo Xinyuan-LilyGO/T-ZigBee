@@ -336,7 +336,8 @@ static void zcl_getAttrData(uint8_t u8DataType, t_AttrData *psAttrData, uint8_t 
 /***        local variables                                                 ***/
 /******************************************************************************/
 
-QueueHandle_t msg_queue;
+static QueueHandle_t msg_queue;
+static TaskHandle_t zhbci_handle;
 
 /******************************************************************************/
 /***        exported functions                                              ***/
@@ -346,7 +347,14 @@ void zbhci_Init(QueueHandle_t queue)
 {
     msg_queue = queue;
     uart_init();
-    xTaskCreate(zbhci_task, "zbhci_task", 8012, NULL, 12, NULL);
+    xTaskCreate(zbhci_task, "zbhci_task", 8012, NULL, 12, &zhbci_handle);
+}
+
+void zbhci_Deinit(void)
+{
+    msg_queue = NULL;
+    vTaskDelete(zhbci_handle);
+    uart_deinit();
 }
 
 

@@ -7,6 +7,7 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <stdio.h>
+#include <stdbool.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -21,6 +22,7 @@
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "driver/gpio.h"
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
@@ -109,12 +111,28 @@ void wifi_init_sta(void)
                                                         NULL,
                                                         &instance_got_ip));
 
-    wifi_config_t wifi_config;
-    memcpy(wifi_config.sta.ssid, WIFI_SSID, strlen(WIFI_SSID));
-    memcpy(wifi_config.sta.password, WIFI_PASS, strlen(WIFI_PASS));
-    wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
-    wifi_config.sta.pmf_cfg.capable = true;
-    wifi_config.sta.pmf_cfg.required = true;
+    // wifi_config_t wifi_config;
+    // memcpy(wifi_config.sta.ssid, WIFI_SSID, strlen(WIFI_SSID));
+    // memcpy(wifi_config.sta.password, WIFI_PASS, strlen(WIFI_PASS));
+    // wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
+    // wifi_config.sta.pmf_cfg.capable = true;
+    // wifi_config.sta.pmf_cfg.required = false;
+
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = WIFI_SSID,
+            .password = WIFI_PASS,
+            /* Setting a password implies station will connect to all security modes including WEP/WPA.
+             * However these modes are deprecated and not advisable to be used. Incase your Access point
+             * doesn't support WPA2, these mode can be enabled by commenting below line */
+             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
+
+            .pmf_cfg = {
+                .capable = true,
+                .required = false
+            },
+        },
+    };
 
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
@@ -165,6 +183,36 @@ void app_nvs_init(void)
     ESP_ERROR_CHECK(ret);
 }
 
+void power_init()
+{
+    //zero-initialize the config structure.
+    gpio_config_t io_conf = {};
+    //disable interrupt
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    //set as output mode
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    //bit mask of the pins that you want to set,e.g.GPIO18/19
+    io_conf.pin_bit_mask = 1UL << GPIO_NUM_0;
+    //disable pull-down mode
+    io_conf.pull_down_en = 0;
+    //disable pull-up mode
+    io_conf.pull_up_en = 0;
+    //configure GPIO with the given settings
+    gpio_config(&io_conf);
+}
+
+void power_ctl(bool active)
+{
+    if (active)
+    {
+        gpio_set_level(GPIO_NUM_0, 1);
+    }
+    else
+    {
+        gpio_set_level(GPIO_NUM_0, 0);
+    }
+}
+
 
 #ifdef ARDUINO
 void setup()
@@ -172,13 +220,20 @@ void setup()
 void app_main(void)
 #endif
 {
-
+    power_init();
     app_nvs_init();
     wifi_init_sta();
     mqtt_app_start();
     app_db_init();
 
     msg_queue = xQueueCreate(10, sizeof(ts_HciMsg));
+
+    // Power on the zigbee chip:
+    //   power_ctl(true);
+    // Power off the zigbee chip:
+    //   power_ctl(false);
+    //   zbhci_Deinit();
+    power_ctl(true);
 
     zbhci_Init(msg_queue);
     vTaskDelay(100 / portTICK_PERIOD_MS);

@@ -37,6 +37,8 @@ void uart_send(const void* src, size_t size);
 
 BaseType_t uart_recv(uint8_t *data, size_t size);
 
+void uart_deinit(void);
+
 #ifdef __cplusplus
 }
 #endif

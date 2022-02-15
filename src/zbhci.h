@@ -38,6 +38,8 @@ extern "C" {
 
 void zbhci_Init(QueueHandle_t queue);
 
+void zbhci_Deinit(void);
+
 /**
  * @brief start network formation.
  */

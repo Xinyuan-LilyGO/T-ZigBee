@@ -41,6 +41,7 @@ QueueHandle_t recv_queue;
 /******************************************************************************/
 
 static QueueHandle_t uart_queue;
+static TaskHandle_t uart_handle;
 
 /******************************************************************************/
 /***        exported functions                                              ***/
@@ -69,7 +70,7 @@ void uart_init(void)
     recv_queue = xQueueCreate(10, RD_BUF_SIZE);
 
     //Create a task to handler UART event from ISR
-    xTaskCreate(uart_event_task, "uart_event_task", 4096, NULL, 12, NULL);
+    xTaskCreate(uart_event_task, "uart_event_task", 4096, NULL, 12, &uart_handle);
 }
 
 void uart_send(const void* src, size_t size)
@@ -82,6 +83,14 @@ BaseType_t uart_recv(uint8_t *data, size_t size)
     return xQueueReceive(recv_queue, data, portMAX_DELAY);
 }
 
+
+void uart_deinit(void)
+{
+    vTaskDelete(uart_handle);
+    uart_driver_delete(UART_NUM_1);
+    gpio_reset_pin(GPIO_NUM_18);
+    // gpio_set_level(GPIO_NUM_18, 0);
+}
 
 /******************************************************************************/
 /***        local functions                                                 ***/
