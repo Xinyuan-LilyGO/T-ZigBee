@@ -182,15 +182,21 @@ static void zbhci_UnpackMgmtBindRspPayload(ts_MsgMgmtBindRspPayload *psPayload, 
 
 static void zbhci_UnpackMgmtLeaveRspPayload(ts_MsgMgmtLeaveRspPayload *psPayload, uint8_t *pu8Payload);
 
+#if 0
 static void zbhci_UnpackMgmtDirectJoinRspPayload();
+#endif
 
 static void zbhci_UnpackMgmtPermitJoinRspPayload(ts_MsgMgmtPermitJoinRspPayload *psPayload, uint8_t *pu8Payload);
 
+#if 0
 static void zbhci_UnpackMgmtNwkUpdateRspPayload();
+#endif
 
 static void zbhci_UnpackNodesJoinedGetRspPayload(ts_MsgNodesJoinedGetRspPayload *psPayload, uint8_t *pu8Payload);
 
+#if 0
 static void zbhci_UnpackNodesTogleTestRspPayload();
+#endif
 
 static void zbhci_UnpackTxRxPerformanceTestRspPayload(ts_MsgTxRxPerformceTestRspPayload *psPayload, uint8_t *pu8Payload);
 
@@ -238,6 +244,7 @@ static void zbhci_UnpackMacAddrIndPayload(ts_MsgMacAddrIndPayload *psPayload, ui
 
 static void zbhci_UnpackNodeLeaveIndPayload(ts_MsgNodeLeaveIndPayload *psPayload, uint8_t *pu8Payload);
 
+#if 0
 static void zbhci_HandleAcknowledg(ts_MsgAckPayload *psPayload);
 
 static void zbhci_HandleDiscoveryNwkAddrRsp();
@@ -315,6 +322,7 @@ static void zbhci_HandleDataConfirm();
 static void zbhci_HandleMacAddrInd();
 
 static void zbhci_HandleNodeLeaveInd();
+#endif
 
 static int32_t zbhci_CmdUnpack(uint8_t *src, size_t size, uint16_t *pu16Type, uint16_t *pu16Length, uint8_t *pu8Data);
 
@@ -1130,7 +1138,7 @@ void zbhci_ZclOnoffOn(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (&au8Payload[u16MsgLength] == 0x01)
+    if (u8DstAddrMode == 0x01)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -2388,12 +2396,12 @@ static void zbhci_UnpackMgmtLqiRspPayload(ts_MsgMgmtLqiRspPayload *psPayload, ui
         psPayload->asNeighborTable[n].network_addr = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
         u8Temp = BUFFER_TO_U8_OFFSET(pu8Payload, u16Offset, u16Offset);
         psPayload->asNeighborTable[n].deviceType   = u8Temp & 0b00000011;
-        psPayload->asNeighborTable[n].rxOnWhenIdle = u8Temp & 0b00001100;
-        psPayload->asNeighborTable[n].relationship = u8Temp & 0b01110000;
-        psPayload->asNeighborTable[n].reserved1    = u8Temp & 0b10000000;
+        psPayload->asNeighborTable[n].rxOnWhenIdle = (uint8_t)((u8Temp & 0b00001100) >> 2);
+        psPayload->asNeighborTable[n].relationship = (uint8_t)((u8Temp & 0b01110000) >> 4);
+        psPayload->asNeighborTable[n].reserved1    = (uint8_t)((u8Temp & 0b10000000) >> 7);
         u8Temp = BUFFER_TO_U8_OFFSET(pu8Payload, u16Offset, u16Offset);
         psPayload->asNeighborTable[n].permitJoining = u8Temp & 0b00000011;
-        psPayload->asNeighborTable[n].reserved2     = u8Temp & 0b11111100;
+        psPayload->asNeighborTable[n].reserved2     = (uint8_t)((u8Temp & 0b11111100) >> 2);
         psPayload->asNeighborTable[n].depth         = BUFFER_TO_U8_OFFSET(pu8Payload, u16Offset, u16Offset);
         psPayload->asNeighborTable[n].lqi           = BUFFER_TO_U8_OFFSET(pu8Payload, u16Offset, u16Offset);
     }
@@ -2441,10 +2449,12 @@ static void zbhci_UnpackMgmtLeaveRspPayload(ts_MsgMgmtLeaveRspPayload *psPayload
 }
 
 
+#if 0
 static void zbhci_UnpackMgmtDirectJoinRspPayload()
 {
     /** None */
 }
+#endif
 
 
 static void zbhci_UnpackMgmtPermitJoinRspPayload(ts_MsgMgmtPermitJoinRspPayload *psPayload, uint8_t *pu8Payload)
@@ -2457,12 +2467,12 @@ static void zbhci_UnpackMgmtPermitJoinRspPayload(ts_MsgMgmtPermitJoinRspPayload 
     psPayload->u8Status = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
 }
 
-
+#if 0
 static void zbhci_UnpackMgmtNwkUpdateRspPayload()
 {
     /** None */
 }
-
+#endif
 
 static void zbhci_UnpackNodesJoinedGetRspPayload(ts_MsgNodesJoinedGetRspPayload *psPayload, uint8_t *pu8Payload)
 {
@@ -2481,10 +2491,12 @@ static void zbhci_UnpackNodesJoinedGetRspPayload(ts_MsgNodesJoinedGetRspPayload 
 }
 
 
+#if 0
 static void zbhci_UnpackNodesTogleTestRspPayload()
 {
     /** None */
 }
+#endif
 
 
 static void zbhci_UnpackTxRxPerformanceTestRspPayload(ts_MsgTxRxPerformceTestRspPayload *psPayload, uint8_t *pu8Payload)
@@ -2903,7 +2915,7 @@ static void zbhci_UnpackNodeLeaveIndPayload(ts_MsgNodeLeaveIndPayload *psPayload
     psPayload->u64MacAddr =  BUFFER_TO_U64_OFFSET(pu8Payload, u16Offset, u16Offset);
 }
 
-
+#if 0
 static void zbhci_HandleAcknowledg(ts_MsgAckPayload *psPayload)
 {
 
@@ -3122,7 +3134,7 @@ static void zbhci_HandleNodeLeaveInd()
 {
 
 }
-
+#endif
 
 static uint8_t zcl_getDataTypeLen(uint8_t u8DataType)
 {

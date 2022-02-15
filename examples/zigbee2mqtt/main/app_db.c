@@ -228,7 +228,7 @@ void hex2str(uint64_t u64number, char *str, int len)
     if (NULL == str) return;
     while (u64number) {
         temp = u64number % 0x10;
-        if (((temp >= 0) && (temp <= 9))) {
+        if (temp <= 9) {
             str[i] = temp + '0';
         } else if (temp >= 0x0A && temp <= 0x0F) {
             str[i] = temp - 10 + 'a';

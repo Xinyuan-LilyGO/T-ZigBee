@@ -99,7 +99,7 @@ void uart_deinit(void)
 static void uart_event_task(void *pvParameters)
 {
     uart_event_t event;
-    size_t buffered_size = 0;
+    // size_t buffered_size = 0;
     uint8_t recvdata[RD_BUF_SIZE] = { 0 };
 
     for(;;)
