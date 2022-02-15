@@ -32,6 +32,9 @@
 #include "app_db.h"
 #include "device.h"
 #include "app_config.h"
+#ifdef ARDUINO
+#include "zigbee2mqtt.h"
+#endif
 
 /* The event group allows multiple bits for each event, but we only care about two events:
  * - we are connected to the AP with an IP
@@ -215,7 +218,7 @@ void power_ctl(bool active)
 
 
 #ifdef ARDUINO
-void setup()
+void app_init()
 #else
 void app_main(void)
 #endif
@@ -245,11 +248,11 @@ void app_main(void)
 }
 
 
-#ifdef ARDUINO
-void loop()
-#else
+// #ifdef ARDUINO
+// void loop()
+// #else
 void main_loop(void)
-#endif
+// #endif
 {
     ts_HciMsg sHciMsg;
     device_node_t *device = NULL;
