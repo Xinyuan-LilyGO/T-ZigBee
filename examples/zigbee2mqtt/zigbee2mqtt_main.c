@@ -14,8 +14,6 @@
 #include "esp_system.h"
 #include "esp_spi_flash.h"
 #include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "freertos/event_groups.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
@@ -26,6 +24,10 @@
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
+
+#ifndef ARDUINO
+#include "iot_button.h"
+#endif
 
 #include "app_mqtt.h"
 #include "zbhci.h"
@@ -42,6 +44,7 @@
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
+#define USER_BUTTON_NUM 2
 
 #ifndef ARDUINO
 void main_loop();
@@ -216,6 +219,47 @@ void power_ctl(bool active)
     }
 }
 
+#ifndef ARDUINO
+static void button_single_click_cb(void *arg)
+{
+    // 短按 打开配网
+    static int count = 0;
+    if (count % 2)
+    {
+        zbhci_MgmtPermitJoinReq(0xFFFC, 0xFF, 1);
+        
+    }
+    else
+    {
+        zbhci_MgmtPermitJoinReq(0xFFFC, 0x00, 1);
+    }
+    count++;
+}
+
+
+#if 0
+static void button_long_press_start_cb(void *arg)
+{
+    // 长按删除网络信息
+    zbhci_BdbFactoryReset();
+}
+#endif
+
+
+void app_button(int btn_num)
+{
+    button_config_t cfg = {
+        .type = BUTTON_TYPE_GPIO,
+        .gpio_button_config = {
+            .gpio_num = btn_num,
+            .active_level = 0,
+        },
+    };
+    button_handle_t btn_handle = iot_button_create(&cfg);
+    iot_button_register_cb(btn_handle, BUTTON_SINGLE_CLICK, button_single_click_cb);
+    // iot_button_register_cb(btn_handle, BUTTON_LONG_PRESS_START, button_long_press_start_cb);
+}
+#endif
 
 #ifdef ARDUINO
 void app_init()
@@ -225,6 +269,9 @@ void app_main(void)
 {
     power_init();
     app_nvs_init();
+#ifndef ARDUINO
+    app_button(USER_BUTTON_NUM);
+#endif
     wifi_init_sta();
     mqtt_app_start();
     app_db_init();
