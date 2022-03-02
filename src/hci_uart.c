@@ -51,14 +51,14 @@ void uart_init(void)
 {
     /* Configure parameters of an UART driver,
      * communication pins and install the driver */
-    uart_config_t uart_config;
-
-    uart_config.baud_rate  = 115200;
-    uart_config.data_bits  = UART_DATA_8_BITS;
-    uart_config.parity     = UART_PARITY_DISABLE;
-    uart_config.stop_bits  = UART_STOP_BITS_1;
-    uart_config.flow_ctrl  = UART_HW_FLOWCTRL_DISABLE;
-    uart_config.source_clk = UART_SCLK_APB;
+    uart_config_t uart_config = {
+        .baud_rate  = 115200,
+        .data_bits  = UART_DATA_8_BITS,
+        .parity     = UART_PARITY_DISABLE,
+        .stop_bits  = UART_STOP_BITS_1,
+        .flow_ctrl  = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_APB
+    };
 
     //Install UART driver, and get the queue.
     uart_driver_install(UART_NUM_1, BUF_SIZE * 5, BUF_SIZE * 5, 20, &uart_queue, 0);
