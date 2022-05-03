@@ -81,7 +81,7 @@ extern "C" {
 /******************************************************************************/
 
 /**
- * @brief ZigBee HCI message type
+ * @enum te_HCIMsgType ZigBee HCI message type
  */
 typedef enum te_HCIMsgType
 {
@@ -325,7 +325,9 @@ typedef struct ts_AttrList
 } ts_AttrList;
 
 
-/** Status message */
+/**
+ * @enum te_MsgAckStatus Status message.
+ */
 typedef enum te_MsgAckStatus
 {
     ZBHCI_MSG_STATUS_SUCCESS               = 0x00, /**< Success */
@@ -361,9 +363,7 @@ typedef struct ts_MsgNetworkStateRspPayload
     uint8_t  u8Channel;
 } ts_MsgNetworkStateRspPayload;
 
-/**
- * @brief hahahhahaha
- */
+
 typedef struct ts_MsgDiscoveryNwkAddrRspPayload
 {
     uint8_t  u8SeqNum;             /**< ZDP transaction sequence number. */

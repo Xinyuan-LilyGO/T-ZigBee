@@ -33,7 +33,7 @@ extern "C" {
 
 /**
  * @addtogroup zbhci_fountions zigbee hci APIs
- *  @{
+ * @{
  */
 
 void zbhci_Init(QueueHandle_t queue);
@@ -55,24 +55,24 @@ void zbhci_BdbCommissionSteer(void);
 /**
  * @brief touch link network formation or touch link join start.
  * 
- * @param eRole initiator or target @see te_MsgBdbCommissionTouchlinkRole
+ * @param[in] eRole initiator or target @see te_MsgBdbCommissionTouchlinkRole
  */
 void zbhci_BdbCommissionTouchlink(te_MsgBdbCommissionTouchlinkRole eRole);
 
 /**
  * @brief find and bind touch link node.
  * 
- * @param eRole initiator or target @see te_MsgBdbCommissionTouchlinkRole
+ * @param[in] eRole initiator or target @see te_MsgBdbCommissionTouchlinkRole
  */
 void zbhci_BdbCommissionFindbind(te_MsgBdbCommissionFindbindRole eRole);
 
 /**
  * @brief Reset device to factory new.
  *
- * @note This interface could be called by Coordinator, Router or End-Device.
- *       If coordinator: \n
- *         It will erase all NV information and reset all layer settings. \n
- *       if router or end device: \n
+ * @note This interface could be called by Coordinator, Router or End-Device. @n
+ *       If coordinator: @n
+ *         It will erase all NV information and reset all layer settings. @n
+ *       if router or end device: @n
  *         If it is a not factory new device, it will broadcast a Leave Command
  *         before factory new reset.
  */
@@ -81,36 +81,36 @@ void zbhci_BdbFactoryReset(void);
 /**
  * @brief Add pre-install code to NV.
  * 
- * @param u64DevAddr       the ieee address of the device using unique link key join
- * @param pu8UniqueLinkKey the pointer of install code
+ * @param[in] u64DevAddr       the ieee address of the device using unique link key join
+ * @param[in] pu8UniqueLinkKey the pointer of install code
  */
 void zbhci_BdbPreInstallCode(uint64_t u64DevAddr, uint8_t *pu8UniqueLinkKey);
 
 /**
  * @brief Set channel mask to APS_IB.
  * 
- * @param u8ChannelIdx channel: 11 - 26
+ * @param[in] u8ChannelIdx channel: 11 - 26
  */
 void zbhci_BdbChannelSet(uint8_t u8ChannelIdx);
 
 /**
  * @brief Set the working mode of the coordinator
  * 
- * @param eMode work mode @see te_MsgBdbDongleWorkingMode
+ * @param[in] eMode work mode @see te_MsgBdbDongleWorkingMode
  */
 void zbhci_BdbDongleWorkingModeSet(te_MsgBdbDongleWorkingMode eMode);
 
 /**
  * @brief Interface for forgetting all information about the specified device.
  * 
- * @param u64DevAddr ieee address of the specified device
+ * @param[in] u64DevAddr ieee address of the specified device
  */
 void zbhci_BdbNodeDelete(uint64_t u64DevAddr);
 
 /**
  * @brief Set specified transmitted power.
  * 
- * @param eLevel Specified power @see te_BdbTxPowerLevel.
+ * @param[in] eLevel Specified power @see te_BdbTxPowerLevel.
  */
 void zbhci_BdbTxPowerSet(te_BdbTxPowerLevel eLevel);
 
@@ -126,10 +126,10 @@ void zbhci_NetworkStateReq(void);
  *                        sent, shall be unicast or broadcast to all devices
  *                        for which macRxOnWhenIdle = TRUE.
  * @param[in] u64IEEEAddr The IEEE address to be matched by the remote device.
- * @param[in] u8ReqType   Request type for this command: \n
- *                          0x00 – Single device response; \n
- *                          0x01 – Extended response; \n
- *                          0x02 ~ 0xFF – Reserved.
+ * @param[in] u8ReqType   Request type for this command: @n
+ *                        @li 0x00 – Single device response; @n
+ *                        @li 0x01 – Extended response; @n
+ *                        @li 0x02 ~ 0xFF – Reserved.
  * @param[in] u8StartIdx  If the request type for this command is extended
  *                        response, the startIdx provides the starting index for
  *                        the requested elements of the associated device list.
@@ -147,10 +147,10 @@ void zbhci_DiscoveryNwkAddrReq(uint16_t u16DstAddr,
  *                                 to all devices for which macRxOnWhenIdle = TRUE.
  * @param[in] u16NwkAddrOfInterest The NWK address that is used for IEEE address
  *                                 mapping.
- * @param[in] u8ReqType            Request type for this command: \n
- *                                   0x00 – Single device response; \n
- *                                   0x01 – Extended response; \n
- *                                   0x02 ~ 0xFF – Reserved.
+ * @param[in] u8ReqType            Request type for this command: @n
+ *                                 \arg 0x00 – Single device response; @n
+ *                                 \arg 0x01 – Extended response; @n
+ *                                 \arg 0x02 ~ 0xFF – Reserved.
  * @param[in] u8StartIdx           If the request type for this command is
  *                                 extended response, the startIdx provides the
  *                                 starting index for the requested elements of
@@ -196,13 +196,13 @@ void zbhci_DiscoverySimpleDescReq(uint16_t u16DstAddr,
  * @param[in] u8NumInClusters      Profile ID to be matched at the destination.
  * @param[in] u8NumOutClusters     Profile ID to be matched at the destination.
  * @param[in] pu16ClusterList      inClusterList + outClusterList.
- *                                 List of input cluster IDs to be used for
+ *                                 @li List of input cluster IDs to be used for
  *                                 matching, the inClusterList is the desired
  *                                 list to be matched by the Remote
  *                                 Device (the elements of the inClusterList
  *                                 are the supported output clusters of the
  *                                 Local Device).
- *                                 List of output cluster IDs to be used for
+ *                                 @li List of output cluster IDs to be used for
  *                                 matching, the outClusterList is the desired
  *                                 list to be matched by the Remote Device (the
  *                                 elements of the outClusterList are the
@@ -252,14 +252,14 @@ void zbhci_DiscoveryLeaveReq(uint64_t u64DevAddr,
  * @param[in] u16ClusterID   The identifier of the cluster on the source device
  *                           that is bound to the destination.
  * @param[in] u8DstAddrMode  The addressing mode for the destination address
- *                           used in this command.\n
- *                             0x00 – Reserved;\n
- *                             0x01 – 16-bit group address for dstAddr and
- *                                    dstEndpoint not present;\n
- *                             0x02 – Reserved;\n
- *                             0x03 – 64-bit extended address for dstAddr and
- *                                    dstEndpoint present;\n
- *                             0x04 ~ 0xFF – Reserved.
+ *                           used in this command. @n
+ *                           @li 0x00 – Reserved; @n
+ *                           @li 0x01 – 16-bit group address for dstAddr and
+ *                                      dstEndpoint not present; @n
+ *                           @li 0x02 – Reserved; @n
+ *                           @li 0x03 – 64-bit extended address for dstAddr and
+ *                                      dstEndpoint present; @n
+ *                           @li 0x04 ~ 0xFF – Reserved.
  * @param[in] sDstAddr       The destination address for the binding entry.
  * @param[in] u8DstEndpoint  Shall be present only if the dstAddrMode field has
  *                           a value of 0x03 and, if present, shall be the
@@ -280,14 +280,14 @@ void zbhci_BindingReq(uint64_t   u64SrcIEEEAddr,
  * @param[in] u16ClusterID   The identifier of the cluster on the source device
  *                           that is bound to the destination.
  * @param[in] u8DstAddrMode  The addressing mode for the destination address
- *                           used in this command.\n
- *                             0x00 – Reserved;\n
- *                             0x01 – 16-bit group address for dstAddr and
- *                                    dstEndpoint not present;\n
- *                             0x02 – Reserved;\n
- *                             0x03 – 64-bit extended address for dstAddr and
- *                                    dstEndpoint present;\n
- *                             0x04 ~ 0xFF – Reserved.
+ *                           used in this command. @n
+ *                           @li 0x00 – Reserved; @n
+ *                           @li 0x01 – 16-bit group address for dstAddr and
+ *                                      dstEndpoint not present; @n
+ *                           @li 0x02 – Reserved; @n
+ *                           @li 0x03 – 64-bit extended address for dstAddr and
+ *                                      dstEndpoint present; @n
+ *                           @li 0x04 ~ 0xFF – Reserved.
  * @param[in] sDstAddr       The destination address for the binding entry.
  * @param[in] u8DstEndpoint  Shall be present only if the dstAddrMode field has
  *                           a value of 0x03 and, if present, shall be the
@@ -454,17 +454,17 @@ void zbhci_AfDataSendTestReq(uint16_t u16DstAddr,
 /**
  * @brief Send a Read Attribute command.
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Direction   direction of the command: \n
- *                            0 – Client to server; \n
- *                            1 – Server to client.
+ * @param[in] u8Direction   direction of the command: @n
+ *                          @arg 0 – Client to server; @n
+ *                          @arg 1 – Server to client.
  * @param[in] u16ClusterID  Cluster identifier.
  * @param[in] u8AttrNum     The number of attributes to be read.
  * @param[in] pu16AttrList  The list of the attribute IDs to be read.
@@ -481,17 +481,17 @@ void zbhci_ZclAttrRead(uint8_t    u8DstAddrMode,
 /**
  * @brief Send a Write Attribute command
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                          0 – without destination address and endpoint, for binding; \n
- *                          1 – with group address; \n
- *                          2 – with destination short address and endpoint; \n
- *                          3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Direction   direction of the command: \n
- *                            0 – Client to server; \n
- *                            1 – Server to client.
+ * @param[in] u8Direction   direction of the command: @n
+ *                          @arg 0 – Client to server; @n
+ *                          @arg 1 – Server to client.
  * @param[in] u16ClusterID  Cluster identifier.
  * @param[in] u8AttrNum     The number of attributes to be written.
  * @param[in] pu16AttrList  The list of the attributes to be written.
@@ -508,17 +508,17 @@ void zbhci_ZclAttrWrite(uint8_t     u8DstAddrMode,
 /**
  * @brief API to send ZCL configure report command
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Direction   specified the command direction: \n
- *                            0 – Client to server; \n
- *                            1 – Server to client.
+ * @param[in] u8Direction   specified the command direction: @n
+ *                          @arg 0 – Client to server; @n
+ *                          @arg 1 – Server to client.
  * @param[in] u16ClusterID  Cluster identifier.
  * @param[in] u8AttrNum     The number of attributes to be configured.
  * @param[in] pu16AttrList  The list of the attributes to be configured.
@@ -538,17 +538,17 @@ void zbhci_ZclConfigReport(uint8_t     u8DstAddrMode,
  *        to request the attribute reporting configuration data for a set of
  *        attributes.
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Direction   specified the command direction: \n
- *                            0 – Client to server;\n
- *                            1 – Server to client.
+ * @param[in] u8Direction   specified the command direction: @n
+ *                          @arg 0 – Client to server;@n
+ *                          @arg 1 – Server to client.
  * @param[in] u16ClusterID  Cluster identifier.
  * @param[in] u8AttrNum     The number of attributes’ configuration to be read.
  * @param[in] pu16AttrList  The list of the attributes to be read.
@@ -565,11 +565,11 @@ void zbhci_ZclReadReportCfg(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Basic Reset to factory default command
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -582,11 +582,11 @@ void zbhci_ZclBasicReset(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Add command in Group cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -603,11 +603,11 @@ void zbhci_ZclGroupAdd(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send View command in Group cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -622,11 +622,11 @@ void zbhci_ZclGroupView(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Get Membership command in Group cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -643,11 +643,11 @@ void zbhci_ZclGroupGetMembership(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Remove command in Group cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -662,11 +662,11 @@ void zbhci_ZclGroupRemove(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Remove All command in Group cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -679,11 +679,11 @@ void zbhci_ZclGroupRemoveAll(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send View command in Group cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -700,11 +700,11 @@ void zbhci_ZclGroupAddIfIdentify(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Identify Query command in IDENTIFY cluster.
  *
- * @param[in] u8DstAddrMode   Destination address mode: \n
- *                              0 – without destination address and endpoint, for binding; \n
- *                              1 – with group address; \n
- *                              2 – with destination short address and endpoint; \n
- *                              3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode   Destination address mode: @n
+ *                            @arg 0 – without destination address and endpoint, for binding; @n
+ *                            @arg 1 – with group address; @n
+ *                            @arg 2 – with destination short address and endpoint; @n
+ *                            @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr        Destination address for this command.
  * @param[in] u8SrcEp         Source endpoint.
  * @param[in] u8DstEp         Destination endpoint if dstAddrMode is 2 or 3.
@@ -719,11 +719,11 @@ void zbhci_ZclIdentifyQuery(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send ON command in ONOFF cluster
  *
- * @param[in] u8DstAddrMode   Destination address mode: \n
- *                              0 – without destination address and endpoint, for binding; \n
- *                              1 – with group address; \n
- *                              2 – with destination short address and endpoint; \n
- *                              3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode   Destination address mode: @n
+ *                            @arg 0 – without destination address and endpoint, for binding; @n
+ *                            @arg 1 – with group address; @n
+ *                            @arg 2 – with destination short address and endpoint; @n
+ *                            @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr        Destination address for this command.
  * @param[in] u8SrcEp         Source endpoint.
  * @param[in] u8DstEp         Destination endpoint if dstAddrMode is 2 or 3.
@@ -736,11 +736,11 @@ void zbhci_ZclOnoffOn(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send OFF command in ONOFF cluster
  *
- * @param[in] u8DstAddrMode   Destination address mode: \n
- *                              0 – without destination address and endpoint, for binding; \n
- *                              1 – with group address; \n
- *                              2 – with destination short address and endpoint; \n
- *                              3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode   Destination address mode: @n
+ *                            @arg 0 – without destination address and endpoint, for binding; @n
+ *                            @arg 1 – with group address; @n
+ *                            @arg 2 – with destination short address and endpoint; @n
+ *                            @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr        Destination address for this command.
  * @param[in] u8SrcEp         Source endpoint.
  * @param[in] u8DstEp         Destination endpoint if dstAddrMode is 2 or 3.
@@ -753,11 +753,11 @@ void zbhci_ZclOnoffOff(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send TOGGLE command in ONOFF cluster
  *
- * @param[in] u8DstAddrMode   Destination address mode: \n
- *                              0 – without destination address and endpoint, for binding; \n
- *                              1 – with group address; \n
- *                              2 – with destination short address and endpoint; \n
- *                              3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode   Destination address mode: @n
+ *                            @arg 0 – without destination address and endpoint, for binding; @n
+ *                            @arg 1 – with group address; @n
+ *                            @arg 2 – with destination short address and endpoint; @n
+ *                            @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr        Destination address for this command.
  * @param[in] u8SrcEp         Source endpoint.
  * @param[in] u8DstEp         Destination endpoint if dstAddrMode is 2 or 3.
@@ -770,11 +770,11 @@ void zbhci_ZclOnoffToggle(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Move To Level command in Level cluster.
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -791,17 +791,17 @@ void zbhci_ZclLevelMove2level(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Move command in Level cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Mode        Move mode. \n
- *                            0x00 – Up; \n
- *                            0x01 – Down.
+ * @param[in] u8Mode        Move mode. @n
+ *                          @arg 0x00 – Up; @n
+ *                          @arg 0x01 – Down.
  * @param[in] u8Rate        The rate field specifies the rate of movement in
  *                          units per second.
  */
@@ -815,17 +815,17 @@ void zbhci_ZclLevelMove(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Step command in LEVEL cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Mode        Move mode. \n
- *                          0x00 – Up; \n
- *                          0x01 – Down.
+ * @param[in] u8Mode        Move mode. @n
+ *                          @arg 0x00 – Up; @n
+ *                          @arg 0x01 – Down.
  * @param[in] u8StepSize    A step is a change in the current level of
  *                          'step size' units.
  * @param[in] u16TransTime  The transition time field specifies the time that
@@ -843,11 +843,11 @@ void zbhci_ZclLevelStep(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Stop command in Level cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -860,11 +860,11 @@ void zbhci_ZclLevelStop(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Move To Level command in Level cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -881,17 +881,17 @@ void zbhci_ZclLevelMove2levelWithonoff(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Move command in Level cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Mode        Move mode. \n
- *                            0x00 – Up; \n
- *                            0x01 – Down.
+ * @param[in] u8Mode        Move mode. @n
+ *                          @arg 0x00 – Up; @n
+ *                          @arg 0x01 – Down.
  * @param[in] u8Rate        The rate field specifies the rate of movement in
  *                          units per second.
  */
@@ -905,17 +905,17 @@ void zbhci_ZclLevelMoveWithonoff(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Step command in LEVEL cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8Mode        Move mode. \n
- *                          0x00 – Up; \n
- *                          0x01 – Down.
+ * @param[in] u8Mode        Move mode. @n
+ *                          @arg 0x00 – Up; @n
+ *                          @arg 0x01 – Down.
  * @param[in] u8StepSize    A step is a change in the current level of
  *                          'step size' units.
  * @param[in] u16TransTime  The transition time field specifies the time that
@@ -933,11 +933,11 @@ void zbhci_ZclLevelStepWithonoff(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send Stop command in Level cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -950,11 +950,11 @@ void zbhci_ZclLevelStopWithonoff(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send add scene command in SCENE cluster
  *
- * @param[in] u8DstAddrMode   Destination address mode: \n
- *                              0 – without destination address and endpoint, for binding; \n
- *                              1 – with group address; \n
- *                              2 – with destination short address and endpoint; \n
- *                              3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode   Destination address mode: @n
+ *                            @arg 0 – without destination address and endpoint, for binding; @n
+ *                            @arg 1 – with group address; @n
+ *                            @arg 2 – with destination short address and endpoint; @n
+ *                            @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr        Destination address for this command.
  * @param[in] u8SrcEp         Source endpoint.
  * @param[in] u8DstEp         Destination endpoint if dstAddrMode is 2 or 3.
@@ -984,11 +984,11 @@ void zbhci_ZclSceneAdd(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send view scene command in SCENE cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -1006,11 +1006,11 @@ void zbhci_ZclSceneView(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send remove scene command in SCENE cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -1028,11 +1028,11 @@ void zbhci_ZclSceneRemove(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send remove all scene command in SCENE cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -1047,11 +1047,11 @@ void zbhci_ZclSceneRemoveAll(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send store scene command in SCENE cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -1069,11 +1069,11 @@ void zbhci_ZclSceneStore(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send recall scene command in SCENE cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -1091,11 +1091,11 @@ void zbhci_ZclSceneRecall(uint8_t    u8DstAddrMode,
 /**
  * @brief API to send get scene membership command in SCENE cluster
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -1113,11 +1113,11 @@ void zbhci_ZclSceneGetMembership(uint8_t    u8DstAddrMode,
  *        its ‘current hue’ attribute to a target hue value in a continuous
  *        manner within a given time.
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
@@ -1140,18 +1140,18 @@ void zbhci_ZclColorMove2hue(uint8_t    u8DstAddrMode,
  *        continuous manner within a given time (where x and y are the
  *        chromaticities from the CIE xyY colour space).
  *
- * @param u8DstAddrMode Destination address mode: \n
- *                        0 – without destination address and endpoint, for binding; \n
- *                        1 – with group address; \n
- *                        2 – with destination short address and endpoint; \n
- *                        3 – with destination IEEE address and endpoint.
- * @param sDstAddr      Destination address for this command.
- * @param u8SrcEp       Source endpoint.
- * @param u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param u16ColorX     the target x-chromaticity in the CIE xyY colour space
- * @param u16ColorY     the target y-chromaticity in the CIE xyY colour space
- * @param u16TransTime  the time period, in tenths of a second, over which the
- *                      colour change should be implemented.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
+ * @param[in] sDstAddr      Destination address for this command.
+ * @param[in] u8SrcEp       Source endpoint.
+ * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
+ * @param[in] u16ColorX     the target x-chromaticity in the CIE xyY colour space
+ * @param[in] u16ColorY     the target y-chromaticity in the CIE xyY colour space
+ * @param[in] u16TransTime  the time period, in tenths of a second, over which the
+ *                          colour change should be implemented.
  */
 void zbhci_ZclColorMove2Color(uint8_t    u8DstAddrMode,
                               ts_DstAddr sDstAddr,
@@ -1166,17 +1166,17 @@ void zbhci_ZclColorMove2Color(uint8_t    u8DstAddrMode,
  *        to move its ‘current saturation’ attribute to a target saturation
  *        value in a continuous manner within a given time.
  *
- * @param u8DstAddrMode Destination address mode: \n
- *                        0 – without destination address and endpoint, for binding; \n
- *                        1 – with group address; \n
- *                        2 – with destination short address and endpoint; \n
- *                        3 – with destination IEEE address and endpoint.
- * @param sDstAddr      Destination address for this command.
- * @param u8SrcEp       Source endpoint.
- * @param u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param u8Saturation  the target saturation value.
- * @param u16TransTime  the time period, in tenths of a second, over which the
- *                      change in saturation should be implemented.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
+ * @param[in] sDstAddr      Destination address for this command.
+ * @param[in] u8SrcEp       Source endpoint.
+ * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
+ * @param[in] u8Saturation  the target saturation value.
+ * @param[in] u16TransTime  the time period, in tenths of a second, over which the
+ *                          change in saturation should be implemented.
  */
 void zbhci_ZclColorMove2sat(uint8_t    u8DstAddrMode,
                             ts_DstAddr sDstAddr,
@@ -1190,17 +1190,17 @@ void zbhci_ZclColorMove2sat(uint8_t    u8DstAddrMode,
  *        device to move its ‘mired colour temperature’ attribute to a target
  *        value in a continuous manner within a given time.
  *
- * @param u8DstAddrMode       Destination address mode: \n
- *                              0 – without destination address and endpoint, for binding; \n
- *                              1 – with group address; \n
- *                              2 – with destination short address and endpoint; \n
- *                              3 – with destination IEEE address and endpoint.
- * @param sDstAddr            Destination address for this command.
- * @param u8SrcEp             Source endpoint.
- * @param u8DstEp             Destination endpoint if dstAddrMode is 2 or 3.
- * @param u16ColorTemperature the target value of colour temperature
- * @param u16TransTime        the time period, in tenths of a second, over which
- *                            the change in colour temperature should be implemented.
+ * @param[in] u8DstAddrMode       Destination address mode: @n
+ *                                @arg 0 – without destination address and endpoint, for binding; @n
+ *                                @arg 1 – with group address; @n
+ *                                @arg 2 – with destination short address and endpoint; @n
+ *                                @arg 3 – with destination IEEE address and endpoint.
+ * @param[in] sDstAddr            Destination address for this command.
+ * @param[in] u8SrcEp             Source endpoint.
+ * @param[in] u8DstEp             Destination endpoint if dstAddrMode is 2 or 3.
+ * @param[in] u16ColorTemperature the target value of colour temperature
+ * @param[in] u16TransTime        the time period, in tenths of a second, over which
+ *                                the change in colour temperature should be implemented.
  */
 void zbhci_ZclColorMove2temp(uint8_t    u8DstAddrMode,
                              ts_DstAddr sDstAddr,
@@ -1213,19 +1213,19 @@ void zbhci_ZclColorMove2temp(uint8_t    u8DstAddrMode,
  * @brief This function issues an Image Notify message to one or more clients to
  *        indicate that a new application image is available for download.
  *
- * @param[in] u8DstAddrMode Destination address mode: \n
- *                            0 – without destination address and endpoint, for binding; \n
- *                            1 – with group address; \n
- *                            2 – with destination short address and endpoint; \n
- *                            3 – with destination IEEE address and endpoint.
+ * @param[in] u8DstAddrMode Destination address mode: @n
+ *                          @arg 0 – without destination address and endpoint, for binding; @n
+ *                          @arg 1 – with group address; @n
+ *                          @arg 2 – with destination short address and endpoint; @n
+ *                          @arg 3 – with destination IEEE address and endpoint.
  * @param[in] sDstAddr      Destination address for this command.
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
- * @param[in] u8PayloadType 0x00 – Query jitter; \n
- *                          0x01 – Query jitter and manufacturer code; \n
- *                          0x02 – Query jitter, manufacturer code, and image type; \n
- *                          0x03 - Query jitter, manufacturer code, image type,
- *                                 and new file version.
+ * @param[in] u8PayloadType @arg 0x00 – Query jitter; @n
+ *                          @arg 0x01 – Query jitter and manufacturer code; @n
+ *                          @arg 0x02 – Query jitter, manufacturer code, and image type; @n
+ *                          @arg 0x03 - Query jitter, manufacturer code, image type,
+ *                                      and new file version.
  * @param[in] queryJitter   By using the parameter, it prevents a single
  *                          notification of a new OTA upgrade image from
  *                          flooding the upgrade server with requests from clients.
