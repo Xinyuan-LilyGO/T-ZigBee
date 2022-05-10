@@ -45,6 +45,12 @@ void rtcgq11lm_report(uint64_t u64IeeeAddr,
 
 void rtcgq11lm_delete(uint64_t u64IeeeAddr);
 
+void lilygo_light_add(uint64_t u64IeeeAddr);
+
+void lilygo_light_delete(uint64_t u64IeeeAddr);
+
+void lilygo_light_report(uint64_t u64IeeeAddr, uint8_t u8OnOff);
+
 #ifdef __cplusplus
 }
 #endif

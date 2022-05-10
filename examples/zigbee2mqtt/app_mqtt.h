@@ -17,6 +17,8 @@ extern "C" {
 /***        type definitions                                                ***/
 /******************************************************************************/
 
+typedef void (*sub_topic_handle_t)(const char *topic, const char *data);
+
 /******************************************************************************/
 /***        exported variables                                              ***/
 /******************************************************************************/
@@ -26,7 +28,7 @@ extern "C" {
 /******************************************************************************/
 
 void mqtt_app_start(void);
-void app_mqtt_client_subscribe(const char * topic, int qos);
+void app_mqtt_client_subscribe(const char *topic, int qos, sub_topic_handle_t handle);
 void app_mqtt_client_publish(const char *topic, const char *data);
 
 #ifdef __cplusplus

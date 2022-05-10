@@ -5,7 +5,9 @@
 
 #include "device.h"
 #include "app_mqtt.h"
+#include "app_db.h"
 
+#include "zbhci.h"
 #include "cJSON.h"
 #include "esp_log.h"
 
@@ -33,6 +35,8 @@ static void sub_pressure(uint64_t u64IeeeAddr, cJSON *json);
 static void sub_occupancy(uint64_t u64IeeeAddr, cJSON *json);
 
 static void sub_illuminance_lux(uint64_t u64IeeeAddr, cJSON *json);
+
+static void handle_lilygo_light(const char *topic, const char *data);
 
 /******************************************************************************/
 /***        exported variables                                              ***/
@@ -214,6 +218,91 @@ void rtcgq11lm_report(uint64_t u64IeeeAddr,
     cJSON_AddNumberToObject(json, "illuminance", u16Illuminance);
     char *str = cJSON_Print(json);
 
+    app_mqtt_client_publish(topic ,str);
+    cJSON_Delete(json);
+}
+
+
+void lilygo_light_add(uint64_t u64IeeeAddr)
+{
+    char ieeeaddr_str[20] = { 0 };
+    char topic[128] = { 0 };
+    char topic_head[128] = { 0 };
+    char sub_topic[128] = { 0 };
+    cJSON *json = cJSON_CreateObject();
+    cJSON *device = cJSON_CreateObject();
+    cJSON *identifiers = cJSON_CreateArray();
+
+    if (!json) return ;
+    if (!device) goto OUT;
+    if (!identifiers) goto OUT1;
+
+    snprintf(ieeeaddr_str, sizeof(ieeeaddr_str) - 1, "0x%016llx", u64IeeeAddr);
+    snprintf(topic_head, sizeof(topic_head) - 1, "homeassistant/light/0x%016llx", u64IeeeAddr);
+    snprintf(topic, sizeof(topic) - 1, "%s/config", topic_head);\
+    snprintf(sub_topic, sizeof(sub_topic) - 1, "%s/set", topic_head);
+
+    cJSON_AddItemToArray(identifiers, cJSON_CreateString(ieeeaddr_str));
+    cJSON_AddItemToObject(device, "identifiers", identifiers);
+    cJSON_AddStringToObject(device, "manufacturer", "LILYGO");
+    cJSON_AddStringToObject(device, "model", "LILYGO ordinary light");
+    cJSON_AddStringToObject(device, "name", "LILYGO.Light");
+    cJSON_AddStringToObject(device, "sw_version", "0.1.0");
+    cJSON_AddItemToObject(json, "device", device);
+    cJSON_AddStringToObject(json, "~", topic_head);
+    cJSON_AddStringToObject(json, "name", "LILYGO.Light");
+    cJSON_AddStringToObject(json, "cmd_t", "~/set");
+    cJSON_AddStringToObject(json, "stat_t", "~/state");
+    cJSON_AddStringToObject(json, "schema", "json");
+
+    char *str = cJSON_Print(json);
+    app_mqtt_client_publish(topic ,str);
+    app_mqtt_client_subscribe(sub_topic, 0, handle_lilygo_light);
+    ESP_LOGI("Zigbee2MQTT", "Successfully interviewed '%#016llx', device has successfully been paired", u64IeeeAddr);
+OUT:
+    cJSON_Delete(json);
+    return;
+OUT1:
+    cJSON_Delete(json);
+    cJSON_Delete(device);
+}
+
+
+void lilygo_light_delete(uint64_t u64IeeeAddr)
+{
+    char ieeeaddr_str[20] = { 0 };
+    char topic[128] = { 0 };
+
+    snprintf(ieeeaddr_str, sizeof(ieeeaddr_str) - 1, "0x%016llx", u64IeeeAddr);
+
+    memset(topic, 0, sizeof(topic));
+    snprintf(topic, sizeof(topic) - 1, "homeassistant/light/%s/config", ieeeaddr_str);
+    app_mqtt_client_publish(topic ,"");
+}
+
+
+void lilygo_light_report(uint64_t u64IeeeAddr, uint8_t u8OnOff)
+{
+    char topic[128] = { 0 };
+
+    cJSON *json = cJSON_CreateObject();
+    if (!json) return ;
+
+    // printf("lilygo_light_report %d\n", u8OnOff);
+
+    snprintf(topic, sizeof(topic) - 1, "homeassistant/light/0x%016llx/state", u64IeeeAddr);
+    if (u8OnOff == 0x01)
+    {
+        cJSON_AddStringToObject(json, "state", "ON");
+    }
+    else
+    {
+        cJSON_AddStringToObject(json, "state", "OFF");
+    }
+    
+    // cJSON_AddStringToObject(json, "state", u8OnOff ? "ON": "OFF");
+    char *str = cJSON_Print(json);
+    // printf("topic: %s, data: %s\n", topic, str);
     app_mqtt_client_publish(topic ,str);
     cJSON_Delete(json);
 }
@@ -432,6 +521,48 @@ static void sub_illuminance_lux(uint64_t u64IeeeAddr, cJSON *json)
     app_mqtt_client_publish(topic ,str);
 }
 
+
+static void handle_lilygo_light(const char * topic, const char *data)
+{
+    if (!topic || !data) return ;
+    uint64_t u64IeeeAddr = 0;
+    ts_DstAddr  sDstAddr;
+
+    sscanf(topic, "homeassistant/light/0x%016llx/set", &u64IeeeAddr);
+    printf("u64IeeeAddr: 0x%016llx\n", u64IeeeAddr);
+
+    device_node_t *device = find_device_by_ieeeaddr(u64IeeeAddr);
+    if (!device)
+    {
+        printf("on device\n");
+    }
+    sDstAddr.u16DstAddr = device->u16NwkAddr;
+
+    cJSON *json = cJSON_Parse(data);
+    if (!json)
+    {
+        printf("json error\n");
+        return ;
+    }
+    cJSON *state = cJSON_GetObjectItem(json, "state");
+    if (!state)
+    {
+        cJSON_Delete(json);
+        printf("json error\n");
+        return ;
+    }
+    if (!memcmp(state->valuestring, "ON", strlen("ON")))
+    {
+        zbhci_ZclOnoffOn(0x02, sDstAddr, 1, 1);
+    }
+    else
+    {
+        zbhci_ZclOnoffOff(0x02, sDstAddr, 1, 1);
+    }
+
+    // zbhci_ZclAttrWrite(0x02, sDstAddr, 1, 1, 0, 0x0006, 1, &sAttrList);
+    cJSON_Delete(json);
+}
 
 /******************************************************************************/
 /***        END OF FILE                                                     ***/

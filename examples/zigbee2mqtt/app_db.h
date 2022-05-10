@@ -34,6 +34,12 @@ typedef struct ts_rtcgq11lm
     uint16_t u16Illuminance;
 } ts_rtcgq11lm;
 
+typedef struct ts_light
+{
+    uint8_t  u8Ep;
+    uint8_t  u8State;
+} ts_light;
+
 typedef struct device_node_t
 {
     uint64_t u64IeeeAddr;
@@ -45,6 +51,7 @@ typedef struct device_node_t
     {
         ts_wsdcgq11lm wsdcgq11lm;
         ts_rtcgq11lm  rtcgq11lm;
+        ts_light      light;
     } device_data;
 } device_node_t;
 

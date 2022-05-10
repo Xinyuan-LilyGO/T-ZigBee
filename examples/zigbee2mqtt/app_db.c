@@ -160,6 +160,12 @@ void app_db_recover(void)
             {
                 rtcgq11lm_add(device_list[i].u64IeeeAddr);
             }
+            else if (!strncmp((const char *)device_list[i].au8ModelId,
+                     "LILYGO.Light",
+                     strlen("LILYGO.Light")))
+            {
+                lilygo_light_add(device_list[i].u64IeeeAddr);
+            }
         }
     }
 }

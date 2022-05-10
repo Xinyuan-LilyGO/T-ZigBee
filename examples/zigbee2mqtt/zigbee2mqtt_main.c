@@ -363,6 +363,12 @@ void main_loop(void)
                         {
                             wsdcgq11lm_delete(device->u64IeeeAddr);
                         }
+                        else if (!strncmp((const char *)device->au8ModelId,
+                                            "LILYGO.Light",
+                                            strlen("LILYGO.Light")))
+                        {
+                            lilygo_light_delete(device->u64IeeeAddr);
+                        }
                         memset(device, 0, sizeof(device_node_t));
                         app_db_save();
                     }
@@ -398,8 +404,36 @@ void main_loop(void)
                                         app_db_save();
                                         wsdcgq11lm_add(device->u64IeeeAddr);
                                     }
+                                    else if (!strncmp((const char *)sHciMsg.uPayload.sZclReportMsgRcvPayload.asAttrList[i].uAttrData.au8AttrData,
+                                                      "LILYGO.Light",
+                                                      strlen("LILYGO.Light")))
+                                    {
+                                        app_db_save();
+                                        lilygo_light_add(device->u64IeeeAddr);
+                                    }
                                 }
                             }
+                        break;
+
+                        case 0x0006:
+                        {
+                            device = find_device_by_nwkaddr(sHciMsg.uPayload.sZclReportMsgRcvPayload.u16SrcAddr);
+                            if (!device) continue;
+                            for (size_t i = 0; i < sHciMsg.uPayload.sZclReportMsgRcvPayload.u8AttrNum; i++)
+                            {
+                                if (sHciMsg.uPayload.sZclReportMsgRcvPayload.asAttrList[i].u16AttrID == 0x0000)
+                                {
+                                    device->device_data.light.u8State = sHciMsg.uPayload.sZclReportMsgRcvPayload.asAttrList[i].uAttrData.u8AttrData;
+                                    if (!strncmp((const char *)device->au8ModelId,
+                                                "LILYGO.Light",
+                                                strlen("LILYGO.Light")))
+                                    {
+                                        printf("Light\n");
+                                        lilygo_light_report(device->u64IeeeAddr, device->device_data.light.u8State);
+                                    }
+                                }
+                            }
+                        }
                         break;
 
                         case 0x0400: /* Illuminance Measurement Cluster */
