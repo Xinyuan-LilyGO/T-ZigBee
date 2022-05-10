@@ -117,6 +117,13 @@
     ( *( uint8_t* ) ( ( BUFFER )     ) = ( uint8_t ) ( ( ( ( uint8_t  ) ( U8VALUE  ) )       ) & 0xFF ) ), \
     ( ( LEN ) += sizeof( uint8_t  ) ) )
 
+#define ZB_LEBESWAP(ptr,len)                                \
+    for(int i=0; i<(len>>1);i++){                           \
+        unsigned char temp = ptr[len - i - 1];              \
+        ptr[len - i - 1] = ptr[i];                          \
+        ptr[i] = temp;                                      \
+    }
+
 /******************************************************************************/
 /***        type definitions                                                ***/
 /******************************************************************************/
@@ -225,6 +232,8 @@ static void zbhci_UnpackZclGroupGetMembershipRspPayload(ts_MsgZclGroupGetMembers
 static void zbhci_UnpackZclGroupRemoveRspPayload(ts_MsgZclGroupRemoveRspPayload *psPayload, uint8_t *pu8Payload);
 
 static void zbhci_UnpackZclIdentifyQueryRspPayload(ts_MsgZclIdentifyQueryRspPayload *psPayload, uint8_t *pu8Payload);
+
+static void zbhci_UnpackZclOnOffCmdRcvPayload(ts_MsgZclOnOffCmdRcvPayload *psPayload, uint8_t *pu8Payload);
 
 static void zbhci_UnpackZclSceneAddRspPayload(ts_MsgZclSceneAddRspPayload *psPayload, uint8_t *pu8Payload);
 
@@ -854,9 +863,10 @@ void zbhci_ZclAttrWrite(uint8_t     u8DstAddrMode,
     /** @bug The array may be out of bounds */
     uint8_t  au8Payload[256] = { 0 };
     int32_t  i               = 0;
+    uint8_t  dataLen         = 0;
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -872,9 +882,18 @@ void zbhci_ZclAttrWrite(uint8_t     u8DstAddrMode,
     for (i = 0; i < u8AttrNum; i++)
     {
         U16_TO_BUFFER(&au8Payload[u16MsgLength], psAttrList[i].u16AttrID, u16MsgLength);
-        U16_TO_BUFFER(&au8Payload[u16MsgLength], psAttrList[i].u8DataType, u16MsgLength);
-        // TODO
-        // memcpy(&au8Payload[u16MsgLength], psAttrList[i].au8AttrData, );
+        U8_TO_BUFFER(&au8Payload[u16MsgLength], psAttrList[i].u8DataType, u16MsgLength);
+        dataLen = zcl_getAttrSize(psAttrList[i].u8DataType, psAttrList[i].uAttrData.au8AttrData);
+        memcpy(&au8Payload[u16MsgLength], &psAttrList[i].uAttrData, dataLen);
+        // if((psAttrList[i].u8DataType != ZCL_DATA_TYPE_LONG_CHAR_STR)  && \
+        //    (psAttrList[i].u8DataType != ZCL_DATA_TYPE_LONG_OCTET_STR) && \
+        //    (psAttrList[i].u8DataType != ZCL_DATA_TYPE_CHAR_STR)       && \
+        //    (psAttrList[i].u8DataType != ZCL_DATA_TYPE_OCTET_STR)      && \
+        //    (psAttrList[i].u8DataType != ZCL_DATA_TYPE_STRUCT))
+        // {
+        //     ZB_LEBESWAP(&au8Payload[u16MsgLength], dataLen);
+        // }
+        u16MsgLength += dataLen;
     }
 
     zbhci_Tx(ZBHCI_CMD_ZCL_ATTR_WRITE, u16MsgLength, au8Payload);
@@ -908,6 +927,64 @@ void zbhci_ZclReadReportCfg(uint8_t    u8DstAddrMode,
     zbhci_Tx(ZBHCI_CMD_ZCL_CONFIG_REPORT, 0, NULL);
 }
 
+
+void zbhci_ZclLocalAttrWrite(uint8_t  u8Endpoint,
+                             uint16_t u16ClusterId,
+                             uint16_t u16AttrId,
+                             uint8_t  u8DataLen,
+                             uint8_t *pu8Data)
+{
+    uint16_t u16MsgLength    = 0;
+    /** @bug The array may be out of bounds */
+    uint8_t  au8Payload[256] = { 0 };
+
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8Endpoint,   u16MsgLength);
+    U16_TO_BUFFER(&au8Payload[u16MsgLength], u16ClusterId, u16MsgLength);
+    U16_TO_BUFFER(&au8Payload[u16MsgLength], u16AttrId,    u16MsgLength);
+    memcpy(&au8Payload[u16MsgLength], pu8Data, u8DataLen);
+    u16MsgLength += u8DataLen;
+
+    zbhci_Tx(ZBHCI_CMD_ZCL_LOCAL_ATTR_WRITE, u16MsgLength, au8Payload);
+}
+
+
+void zbhci_ZclSendReportCmd(uint8_t      u8DstAddrMode,
+                            ts_DstAddr   sDstAddr,
+                            uint8_t      u8SrcEp,
+                            uint8_t      u8DstEp,
+                            uint8_t      u8DisableDefaultRsp,
+                            uint8_t      u8Direction,
+                            uint16_t     u16ClusterID,
+                            uint16_t     u16AttrID,
+                            uint8_t      u8DataType,
+                            uint8_t      u8DataLen,
+                            uint8_t     *pu8Data)
+{
+    uint16_t u16MsgLength    = 0;
+    /** @bug The array may be out of bounds */
+    uint8_t  au8Payload[256] = { 0 };
+
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
+    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
+    {
+        U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
+    }
+    else if (u8DstAddrMode == 0x03)
+    {
+        U64_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u64DstAddr, u16MsgLength);
+    }
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8SrcEp,             u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstEp,             u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DisableDefaultRsp, u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8Direction,         u16MsgLength);
+    U16_TO_BUFFER(&au8Payload[u16MsgLength], u16ClusterID,        u16MsgLength);
+    U16_TO_BUFFER(&au8Payload[u16MsgLength], u16AttrID,           u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DataType,          u16MsgLength);
+    memcpy(&au8Payload[u16MsgLength], pu8Data, u8DataLen);
+    u16MsgLength += u8DataLen;
+
+    zbhci_Tx(ZBHCI_CMD_ZCL_SEND_REPORT_CMD, u16MsgLength, au8Payload);
+}
 
 void zbhci_ZclBasicReset(uint8_t    u8DstAddrMode,
                          ts_DstAddr sDstAddr,
@@ -1138,7 +1215,7 @@ void zbhci_ZclOnoffOn(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1162,7 +1239,7 @@ void zbhci_ZclOnoffOff(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1775,6 +1852,42 @@ void zbhci_ZclOtaImageNotify(uint8_t    u8DstAddrMode,
 }
 
 
+void zbhci_AfRawDataSend(uint8_t    u8DstAddrMode,
+                         ts_DstAddr sDstAddr,
+                         uint8_t    u8SrcEp,
+                         uint8_t    u8DstEp,
+                         uint16_t   u16ClusterId,
+                         uint16_t   u16ProfileId,
+                         uint8_t    u8TxOptions,
+                         uint8_t    u8Radius,
+                         uint8_t    u8Datalen,
+                         uint8_t   *pu8Data)
+{
+    uint16_t u16MsgLength    = 0;
+    uint8_t  au8Payload[256] = { 0 };
+
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
+    if (u8DstAddrMode == 0x01)
+    {
+        U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
+    }
+    else if (u8DstAddrMode == 0x03)
+    {
+        U64_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u64DstAddr, u16MsgLength);
+    }
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8SrcEp,      u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstEp,      u16MsgLength);
+    U16_TO_BUFFER(&au8Payload[u16MsgLength], u16ClusterId, u16MsgLength);
+    U16_TO_BUFFER(&au8Payload[u16MsgLength], u16ProfileId, u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8TxOptions,  u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8Radius,     u16MsgLength);
+    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8Datalen,    u16MsgLength);
+    memcpy(&au8Payload[u16MsgLength], pu8Data, u8Datalen);
+    u16MsgLength += u8Datalen;
+
+    zbhci_Tx(ZBHCI_CMD_ZCL_OTA_IMAGE_NOTIFY, u16MsgLength, au8Payload);
+}
+
 /******************************************************************************/
 /***        local functions                                                 ***/
 /******************************************************************************/
@@ -1939,6 +2052,7 @@ static void zbhciCmdHandler(uint16_t u16MsgType, uint16_t u16MsgLen, uint8_t *pu
         break;
 
         case ZBHCI_CMD_NETWORK_STATE_RSP:
+        case ZBHCI_CMD_NETWORK_STATE_REPORT:
         {
             zbhci_UnpackNetworkStateRspPayload((ts_MsgNetworkStateRspPayload *)psPayload, pu8Payload);
             displayNetworkStateRsp((ts_MsgNetworkStateRspPayload *)psPayload);
@@ -2152,6 +2266,13 @@ static void zbhciCmdHandler(uint16_t u16MsgType, uint16_t u16MsgLen, uint8_t *pu
         {
             zbhci_UnpackZclIdentifyQueryRspPayload((ts_MsgZclIdentifyQueryRspPayload *)psPayload, pu8Payload);
             displayZclIdentifyQueryRsp((ts_MsgZclIdentifyQueryRspPayload *)psPayload);
+        }
+        break;
+
+        case ZBHCI_CMD_ZCL_ONOFF_CMD_RCV:
+        {
+            zbhci_UnpackZclOnOffCmdRcvPayload((ts_MsgZclOnOffCmdRcvPayload *)psPayload, pu8Payload);
+            displayZclOnOffCmdRcv((ts_MsgZclOnOffCmdRcvPayload *)psPayload);
         }
         break;
 
@@ -2800,6 +2921,19 @@ static void zbhci_UnpackZclIdentifyQueryRspPayload(ts_MsgZclIdentifyQueryRspPayl
     psPayload->u16ShortAddr = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
     psPayload->u8SrcEp      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
     psPayload->u16Timeout   = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
+}
+
+
+static void zbhci_UnpackZclOnOffCmdRcvPayload(ts_MsgZclOnOffCmdRcvPayload *psPayload, uint8_t *pu8Payload)
+{
+    uint16_t u16Offset = 0;
+
+    bzero(psPayload, sizeof(ts_MsgZclOnOffCmdRcvPayload));
+
+    psPayload->u8SrcEp      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    psPayload->u8DstEp      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    psPayload->u16ClusterId = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
+    psPayload->u8CmdId      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
 }
 
 

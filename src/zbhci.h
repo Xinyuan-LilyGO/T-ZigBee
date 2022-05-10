@@ -547,7 +547,7 @@ void zbhci_ZclConfigReport(uint8_t     u8DstAddrMode,
  * @param[in] u8SrcEp       Source endpoint.
  * @param[in] u8DstEp       Destination endpoint if dstAddrMode is 2 or 3.
  * @param[in] u8Direction   specified the command direction: @n
- *                          @arg 0 – Client to server;@n
+ *                          @arg 0 – Client to server; @n
  *                          @arg 1 – Server to client.
  * @param[in] u16ClusterID  Cluster identifier.
  * @param[in] u8AttrNum     The number of attributes’ configuration to be read.
@@ -561,6 +561,26 @@ void zbhci_ZclReadReportCfg(uint8_t    u8DstAddrMode,
                             uint16_t   u16ClusterID,
                             uint8_t    u8AttrNum,
                             uint16_t  *pu16AttrList);
+
+
+void zbhci_ZclLocalAttrWrite(uint8_t  u8Endpoint,
+                             uint16_t u16ClusterId,
+                             uint16_t u16AttrId,
+                             uint8_t  u8DataLen,
+                             uint8_t *pu8Data);
+
+
+void zbhci_ZclSendReportCmd(uint8_t      u8DstAddrMode,
+                            ts_DstAddr   sDstAddr,
+                            uint8_t      u8SrcEp,
+                            uint8_t      u8DstEp,
+                            uint8_t      u8DisableDefaultRsp,
+                            uint8_t      u8Direction,
+                            uint16_t     u16ClusterID,
+                            uint16_t     u16AttrID,
+                            uint8_t      u8DataType,
+                            uint8_t      u8DataLen,
+                            uint8_t     *pu8Data);
 
 /**
  * @brief API to send Basic Reset to factory default command

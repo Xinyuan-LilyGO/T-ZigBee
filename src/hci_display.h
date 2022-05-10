@@ -33,6 +33,8 @@ void displayBdbCommissionFormationRsp(ts_MsgBdbCommissionFormationRspPayload *ps
 
 void displayNetworkStateRsp(ts_MsgNetworkStateRspPayload *psPayload);
 
+void displayZclOnOffCmdRcv(ts_MsgZclOnOffCmdRcvPayload *psPayload);
+
 void displayDiscoveryNwkAddrRsp(ts_MsgDiscoveryNwkAddrRspPayload *psPayload);
 
 void displayDiscoveryIEEEAddrRsp(ts_MsgDiscoveryIEEEAddrRspPayload *psPayload);

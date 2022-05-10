@@ -5,7 +5,11 @@
 
 #include "hci_display.h"
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
 #include "esp_log.h"
+#endif
 
 #include <stdio.h>
 #include <stddef.h>
@@ -14,7 +18,11 @@
 /***        macro definitions                                               ***/
 /******************************************************************************/
 
+#ifdef ARDUINO
+#define LOGI(format, args...) printf(format"\n", ##args)
+#else
 #define LOGI(format, args...) ESP_LOGI("zbhci", format, ##args)
+#endif
 
 /******************************************************************************/
 /***        type definitions                                                ***/
@@ -663,6 +671,17 @@ void displayZclIdentifyQueryRsp(ts_MsgZclIdentifyQueryRspPayload *psPayload)
     LOGI("  (ZCL Identify Query Rsp)");
     LOGI("  Nwk Addr: %#04x", psPayload->u16ShortAddr);
     LOGI("  Time Out: %#04x", psPayload->u16Timeout);
+}
+
+
+void displayZclOnOffCmdRcv(ts_MsgZclOnOffCmdRcvPayload *psPayload)
+{
+    LOGI("Type: %#04x", ZBHCI_CMD_ZCL_ONOFF_CMD_RCV);
+    LOGI("  (ZCL OnOff Cmd Rcv)");
+    LOGI("  Src Ep: %#02x",     psPayload->u8SrcEp);
+    LOGI("  Dst Ep: %#02x",     psPayload->u8DstEp);
+    LOGI("  Cluster ID: %#04x", psPayload->u16ClusterId);
+    LOGI("  Cmd ID: %#02x",     psPayload->u8CmdId);
 }
 
 

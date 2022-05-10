@@ -100,6 +100,7 @@ typedef enum te_HCIMsgType
 
     ZBHCI_CMD_NETWORK_STATE_REQ              = 0x000B,
     ZBHCI_CMD_NETWORK_STATE_RSP              = 0x800B,
+    ZBHCI_CMD_NETWORK_STATE_REPORT           = 0x800C,
 
     ZBHCI_CMD_DISCOVERY_NWK_ADDR_REQ         = 0x0010,
     ZBHCI_CMD_DISCOVERY_IEEE_ADDR_REQ        = 0x0011,
@@ -152,12 +153,18 @@ typedef enum te_HCIMsgType
     ZBHCI_CMD_ZCL_ATTR_WRITE                 = 0x0101,
     ZBHCI_CMD_ZCL_CONFIG_REPORT              = 0x0102,
     ZBHCI_CMD_ZCL_READ_REPORT_CFG            = 0x0103,
+    ZBHCI_CMD_ZCL_LOCAL_ATTR_READ            = 0x0105,
+    ZBHCI_CMD_ZCL_LOCAL_ATTR_WRITE           = 0x0106,
+    ZBHCI_CMD_ZCL_SEND_REPORT_CMD            = 0x0108,
 
     ZBHCI_CMD_ZCL_ATTR_READ_RSP              = 0x8100,
     ZBHCI_CMD_ZCL_ATTR_WRITE_RSP             = 0x8101,
     ZBHCI_CMD_ZCL_CONFIG_REPORT_RSP          = 0x8102,
     ZBHCI_CMD_ZCL_READ_REPORT_CFG_RSP        = 0x8103,
     ZBHCI_CMD_ZCL_REPORT_MSG_RCV             = 0x8104,
+    ZBHCI_CMD_ZCL_LOCAL_ATTR_READ_RSP        = 0x8105,
+    ZBHCI_CMD_ZCL_LOCAL_ATTR_WRITE_RSP       = 0x8106,
+    ZBHCI_CMD_ZCL_ATTR_WRITE_RCV             = 0x8107,
 
     ZBHCI_CMD_ZCL_BASIC                      = 0x0110,
     ZBHCI_CMD_ZCL_BASIC_RESET                = 0x0110,
@@ -184,6 +191,7 @@ typedef enum te_HCIMsgType
     ZBHCI_CMD_ZCL_ONOFF_ON                   = 0x0140,
     ZBHCI_CMD_ZCL_ONOFF_OFF                  = 0x0141,
     ZBHCI_CMD_ZCL_ONOFF_TOGGLE               = 0x0142,
+    ZBHCI_CMD_ZCL_ONOFF_CMD_RCV              = 0x8140,
 
     ZBHCI_CMD_ZCL_LEVEL                      = 0x0150,
     ZBHCI_CMD_ZCL_LEVEL_MOVE2LEVEL           = 0x0150,
@@ -223,7 +231,9 @@ typedef enum te_HCIMsgType
 
     ZBHCI_CMD_DATA_CONFIRM                   = 0x8200, //data confirm
     ZBHCI_CMD_MAC_ADDR_IND                   = 0x8201,
-    ZBHCI_CMD_NODE_LEAVE_IND                 = 0x8202
+    ZBHCI_CMD_NODE_LEAVE_IND                 = 0x8202,
+
+    ZBHCI_CMD_AF_DATA_SEND                   = 0x0300,
 } te_HCIMsgType;
 
 typedef enum te_MsgBdbCommissionTouchlinkRole
@@ -666,6 +676,14 @@ typedef struct ts_MsgZclIdentifyQueryRspPayload
     uint16_t u16Timeout;   /**< The remaining time. */
 } ts_MsgZclIdentifyQueryRspPayload;
 
+typedef struct ts_MsgZclOnOffCmdRcvPayload
+{
+    uint8_t  u8SrcEp;
+    uint8_t  u8DstEp;
+    uint16_t u16ClusterId;
+    uint8_t  u8CmdId;
+} ts_MsgZclOnOffCmdRcvPayload;
+
 typedef struct ts_MsgZclSceneAddRspPayload
 {
     uint8_t  u8Status;   /**< SUCCESS, INSUFFICIENT_SPACE or INVALID_FIELD (the
@@ -786,6 +804,7 @@ typedef struct ts_HciMsg
         ts_MsgZclGroupGetMembershipRspPayload  sZclGroupGetMembershipRspPayload;
         ts_MsgZclGroupRemoveRspPayload         sZclGroupRemoveRspPayload;
         ts_MsgZclIdentifyQueryRspPayload       sZclIdentifyQueryRspPayload;
+        ts_MsgZclOnOffCmdRcvPayload            sZclOnOffCmdRcvPayload;
         ts_MsgZclSceneAddRspPayload            sZclSceneAddRspPayload;
         ts_MsgZclSceneViewRspPayload           sZclSceneViewRspPayload;
         ts_MsgZclSceneRemoveRspPayload         sZclSceneRemoveRspPayload;
