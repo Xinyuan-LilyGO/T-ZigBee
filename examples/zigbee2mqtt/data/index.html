@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        /* body {
+        font-family:"Arial Narrow";
+        } */
+        #navigationBar {
+            background:#2185F4;
+            box-shadow:0px 1px 10px 10px #ddd;
+            height:auto;
+            text-align:center;
+            width:100%;
+        }
+        #navigationBar > ul > li {
+            display:inline;
+        }
+        #navigationBar > ul > li > a
+        {
+            color:#fff;
+            display:inline-block;
+            height:60px;
+            line-height:60px;
+            margin:0px;
+            padding:0px 15px;
+            text-decoration:none;
+            transition: color 0.3s ease-in;
+        }
+        #navigationBar > ul > li > a:hover {
+            color:#FCD000;
+        }
+    </style>
+    <script type="text/javascript">
+        function updateData() {
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.open("get", "/status", false);
+            // xmlhttp.open("get", "/config.json", false);
+            xmlhttp.send();
+            console.log(xmlhttp.responseText)
+            var obj = JSON.parse(xmlhttp.responseText)
+            if (obj) {
+                document.getElementById("model").innerHTML = obj.sys.model;
+                document.getElementById("arch").innerHTML = obj.sys.arch.mfr + ' ' +
+                                                        obj.sys.arch.model + ' ' + 
+                                                        "rev " + obj.sys.arch.revision + ' ' +
+                                                        obj.sys.arch.cpu + ' @ ' +
+                                                        obj.sys.arch.freq + 'Mhz';
+                document.getElementById("fw").innerHTML = obj.sys.fw;
+                document.getElementById("sdk").innerHTML = obj.sys.sdk;
+                document.getElementById("uptime").innerHTML = obj.sys.uptime + " ms";
+                document.getElementById("mem_total").innerHTML = (obj.mem.total / 1024).toFixed(2) + " KB";
+                document.getElementById("mem_free").innerHTML = (obj.mem.free / 1024).toFixed(2) + " KB";
+                document.getElementById("fs_total").innerHTML = (obj.fs.total/ (1024 * 1024)).toFixed(2) + " MB";
+                document.getElementById("fs_used").innerHTML = (obj.fs.used / (1024 * 1024)).toFixed(2) + " MB";
+                document.getElementById("fs_free").innerHTML = (obj.fs.free / (1024 * 1024)).toFixed(2) + " MB";
+                document.getElementById("ap_status").innerHTML = obj.softap.status;
+                document.getElementById("ap_ssid").innerHTML = obj.softap.ssid;
+                document.getElementById("ap_ip").innerHTML = obj.softap.ip;
+                document.getElementById("sta_status").innerHTML = obj.sta.status;
+                document.getElementById("sta_ssid").innerHTML = obj.sta.ssid;
+                document.getElementById("sta_ip").innerHTML = obj.sta.ip;
+                document.getElementById("zigbee_status").innerHTML = obj.zigbee.status;
+                document.getElementById("nwk_addr").innerHTML = "0x" + obj.zigbee.nwk_addr.toString(16);
+                document.getElementById("ieee_addr").innerHTML = "0x" + obj.zigbee.ieee_addr.toString(16);
+                document.getElementById("pan_id").innerHTML = "0x" + obj.zigbee.pan_id.toString(16);
+                document.getElementById("ext_pan").innerHTML = "0x" + obj.zigbee.ext_pan.toString(16);
+                document.getElementById("channel").innerHTML = obj.zigbee.channel;
+                document.getElementById("mqtt_status").innerHTML = obj.mqtt.status;
+                document.getElementById("mqtt_server").innerHTML = obj.mqtt.server;
+            } else {
+                console.log("json error");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <nav id="navigationBar">
+        <ul>
+            <li>
+                <a href="/" class="link">Status</a>
+            </li>
+            <li>
+                <a href="/settings" class="link">Settings</a>
+            </li>
+        </ul>
+    </nav>
+    <div class='main-con margin-b'>
+        <div class='word-p border-bottom padding-b'>System</div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Model</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="model">
+                unknown
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Architecture</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="arch">
+                Espressif ESP32-C3 rev 3 RISC-V CPU @ 160MHz
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Firmware Version</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="fw">
+                git-22.05
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>SDK Version</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="sdk">
+                arduino
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Uptime</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="uptime">
+                0h 0m 0s
+            </div>
+        </div>
+    </div>
+
+    <div class='main-con margin-b'>
+        <div class='word-p border-bottom padding-b'>Memory</div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Total Availabl</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="mem_total">
+                230KB
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Free</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="mem_free">
+                230KB
+            </div>
+        </div>
+    </div>
+
+    <div class='main-con margin-b'>
+        <div class='word-p border-bottom padding-b'>File System</div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Total Availabl</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="fs_total">
+                2MB
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Used</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="fs_used">
+                0.1MB
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Free</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="fs_free">
+                1.9MB
+            </div>
+        </div>
+    </div>
+
+    <div class='main-con margin-b'>
+        <div class='word-p border-bottom padding-b'>softAP</div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>status</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="ap_status">
+                n/a
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>ssid</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="ap_ssid">
+                n/a
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>ip</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="ap_ip">
+                n/a
+            </div>
+        </div>
+    </div>
+
+    <div class='main-con margin-b'>
+        <div class='word-p border-bottom padding-b'>STA</div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>status</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="sta_status">
+                n/a
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>ssid</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="sta_ssid">
+                n/a
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>ip</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="sta_ip">
+                n/a
+            </div>
+        </div>
+    </div>
+
+    <div class='main-con margin-b'>
+        <div class='word-p border-bottom padding-b'>Zigbee</div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>status</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="zigbee_status">
+                runing
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Nwk Addr</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="nwk_addr">
+                0x0000
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>IEEE Addr</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="ieee_addr">
+                0xFFFFFFFFFFFFFFFF
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>PAN ID</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="pan_id">
+                0xFFFF
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Ext PAN ID</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="ext_pan">
+                0xFFFFFFFFFFFFFFFF
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>Channel</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="channel">
+                25
+            </div>
+        </div>
+    </div>
+
+    <div class='main-con margin-b'>
+        <div class='word-p border-bottom padding-b'>MQTT</div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>status</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="mqtt_status">
+                disconnect
+            </div>
+        </div>
+        <div class='list-h flex clear'>
+            <div class='grid3'>server</div>
+            <div class='grid7 text-right text-heavy-gray font16' id="mqtt_server">
+                192.168.3.10
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    updateData();
+    var timer = setInterval(updateData, 5000);
+</script>
+
+</html>

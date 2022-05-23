@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        /* body {
+        font-family:"Arial Narrow";
+        } */
+        #navigationBar {
+            background:#2185F4;
+            box-shadow:0px 1px 10px 10px #ddd;
+            height:auto;
+            text-align:center;
+            width:100%;
+        }
+        #navigationBar > ul > li {
+            display:inline;
+        }
+        #navigationBar > ul > li > a
+        {
+            color:#fff;
+            display:inline-block;
+            height:60px;
+            line-height:60px;
+            margin:0px;
+            padding:0px 15px;
+            text-decoration:none;
+            transition: color 0.3s ease-in;
+        }
+        #navigationBar > ul > li > a:hover {
+            color:#FCD000;
+        }
+    </style>
+    <script type="text/javascript">
+        function restart() {
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xmlhttp.open("get", "/restart", false);
+            xmlhttp.send();
+            alert("The device has restarted, you can close the current page!!!")
+        }
+
+        function updateData()
+        {
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.open("get", "/status", false);
+            // xmlhttp.open("get", "/config.json", false);
+            xmlhttp.send();
+            console.log(xmlhttp.responseText)
+            var obj = JSON.parse(xmlhttp.responseText)
+            if (obj) {
+                document.getElementById("ap_ssid").value = obj.sta.ssid;
+                document.getElementById("ap_password").value = obj.sta.pwd;
+                document.getElementById("server").value = obj.mqtt.server;
+                document.getElementById("port").value = obj.mqtt.port;
+                // var select1 = document.getElementById("channel");
+                // for (var i = 0; i< select1.children.length; i++) {
+                //     if(select1.children.item(i).getAttribute('value') === obj.zigbee.channel) {
+                //         select1.children.item(i).setAttribute('selected','selected');
+                //     }
+                // }
+            }
+        }
+
+        // function userSubmit() {
+        //     var res = document.configForm.submit();
+        //     setTimeout(function() {
+        //         if (res['code'] == 0 ) {
+        //             updateData();
+        //         }
+        //     }, 2000);
+
+        //     alert("userSubmit")
+        // }
+    </script>
+</head>
+
+<body>
+    <nav id="navigationBar">
+        <ul>
+            <li>
+                <a href="/" class="link">Status</a>
+            </li>
+            <li>
+                <a href="/settings" class="link">Settings</a>
+            </li>
+        </ul>
+    </nav>
+    <form action='' method='POST' width=100% name="configForm">
+        <div class='content'>
+            <div class='padding'>
+                <div class='main-con margin-b'>
+                    <div class='word-p border-bottom padding-b'>WLAN</div>
+                    <div class='list-h flex clear'>
+                        <div class='grid3'>SSID</div>
+                        <div class='grid7 text-right text-heavy-gray font16' >
+                            <input type="text" name="ssid" class='input-txt no-border' placeholder='ssid' id="ap_ssid" />
+                        </div>
+                    </div>
+                    <div class='list-h flex clear'>
+                        <div class='grid3'>PASSWORD</div>
+                        <div class='grid7 text-right text-heavy-gray font16' >
+                            <input type="text" class='input-txt' name="password" placeholder='password' id="ap_password">
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class='main-con margin-b'>
+                    <div class='word-p border-bottom padding-b'>ZIGBEE</div>
+                    <div class='list-h flex clear'>
+                        <div class='grid3'>Channel</div>
+                        <div class='grid7 text-right text-heavy-gray font16'>
+                            <select name='units' class="no-border" id="channel">
+                                <option value='11'>11</option>
+                                <option value='12'>12</option>
+                                <option value='13'>13</option>
+                                <option value='14'>14</option>
+                                <option value='11'>15</option>
+                                <option value='12'>16</option>
+                                <option value='13'>17</option>
+                                <option value='14'>18</option>
+                                <option value='13'>19</option>
+                                <option value='14'>20</option>
+                                <option value='13'>21</option>
+                                <option value='14'>22</option>
+                                <option value='14'>23</option>
+                                <option value='13'>24</option>
+                                <option value='14'>25</option>
+                                <option value='14'>26</option>
+                            </select>
+                        </div>
+                    </div>
+                </div> -->
+                <div class='main-con margin-b'>
+                    <div class='word-p border-bottom padding-b'>MQTT</div>
+                    <div class='list-h flex clear'>
+                        <div class='grid3'>Server</div>
+                        <div class='grid7 text-right text-heavy-gray font16'>
+                            <input type="text" class='input-txt' name="ntp_server" placeholder='0.uk.pool.ntp.org' id="server">
+                        </div>
+                    </div>
+                    <div class='list-h flex clear'>
+                        <div class='grid3'>Port</div>
+                        <div class='grid7 text-right text-heavy-gray font16'>
+                            <input type="text" class='input-txt' name="ntp_timezone" placeholder='CST-8' id="port">
+                        </div>
+                    </div>
+                </div>
+                <div class='fix-bottom grid10 clear'>
+                    <input class='submit-btn no-border' style="letter-spacing: inherit;" type='submit' value='Save' />
+                </div>
+                <div class='fix-bottom grid10 clear'>
+                    <button type="button" class="submit-btn no-border" style="letter-spacing: inherit;" onclick="updateData()">Update</button>
+                </div>
+                <div class='fix-bottom grid10 clear'>
+                    <button type="button" class="submit-btn no-border" style="letter-spacing: inherit;" onclick="restart()">Restart</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        updateData();
+    </script>
+</body>
+
+</html>

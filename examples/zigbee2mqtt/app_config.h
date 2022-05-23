@@ -13,7 +13,7 @@ extern "C" {
 /***        macro definitions                                               ***/
 /******************************************************************************/
 
-#define MQTT_BROKER_URL           "mqtt://192.168.3.100"
+#define MQTT_BROKER_URL           "mqtt://192.168.3.10"
 #define WIFI_SSID                 "ChinaNet-A179"
 #define WIFI_PASS                 "88888888"
 #define EXAMPLE_ESP_MAXIMUM_RETRY 5

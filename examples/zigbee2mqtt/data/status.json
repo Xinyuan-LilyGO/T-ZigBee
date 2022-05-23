@@ -1,0 +1,44 @@
+{
+    "sys": {
+        "model": "LiLyGo T-ZigBee",
+        "arch": {
+            "mfr": "Espressif",
+            "model": "ESP32-C3",
+            "revision": "revision 3",
+            "cpu": "RISC-V",
+            "freq": 160
+        },
+        "fw": "git-22.05",
+        "sdk": "arduino",
+        "uptime": 48763
+    },
+    "mem": {
+        "total": 303132,
+        "free": 179560
+    },
+    "fs": {
+        "total": 1507328,
+        "used": 53248,
+        "free": 1454080
+    },
+    "softap": {
+        "status": "n/a",
+        "ssid": "softap_ssid"
+    },
+    "sta": {
+        "status": "n/a",
+        "ssid": "sta_ssid"
+    },
+    "zigbee": {
+        "status": "runing",
+        "nwk_addr": 0,
+        "ieee_addr": "0xa4c1386034e7a599",
+        "pan_id": 61680,
+        "ext_pan": "0xa4c1386034e7a599",
+        "channel": 25
+    },
+    "mqtt": {
+        "status": "connected",
+        "server": "192.168.3.10"
+    }
+}

@@ -9,6 +9,8 @@ extern "C" {
 /***        include files                                                   ***/
 /******************************************************************************/
 
+#include <stdbool.h>
+
 /******************************************************************************/
 /***        macro definitions                                               ***/
 /******************************************************************************/
@@ -30,6 +32,8 @@ typedef void (*sub_topic_handle_t)(const char *topic, const char *data);
 void mqtt_app_start(void);
 void app_mqtt_client_subscribe(const char *topic, int qos, sub_topic_handle_t handle);
 void app_mqtt_client_publish(const char *topic, const char *data);
+bool get_mqtt_status(void);
+void mqtt_app_stop(void);
 
 #ifdef __cplusplus
 }

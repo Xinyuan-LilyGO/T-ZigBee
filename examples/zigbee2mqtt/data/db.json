@@ -1,0 +1,13 @@
+{
+    "sta": {
+        "ssid": "ChinaNet-A179",
+        "pwd": "88888888"
+    },
+    "zigbee": {
+        "channel": 25
+    },
+    "mqtt": {
+        "server": "192.168.3.10",
+        "port": 1883
+    }
+}
