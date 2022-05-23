@@ -259,6 +259,7 @@ void test(void *pvParameters)
             Serial.print(COLOR_NONE);
             esp_task_wdt_reset();
             flag = true;
+            digitalWrite(3, HIGH);
         }
 
         delay(100);
@@ -281,10 +282,14 @@ void setup()
 
     pinMode(0, OUTPUT);
     digitalWrite(0, HIGH);
+    pinMode(3, OUTPUT);
+    digitalWrite(3, LOW);
     delay(500);
 
     msg_queue = xQueueCreate(10, sizeof(ts_HciMsg));
     zbhci_Init(msg_queue);
+    delay(100);
+    zbhci_BdbTxPowerSet(E_BDB_TX_POWER_LEVEL_P11p26dBm);
     delay(100);
     zbhci_NetworkStateReq();
     // Now set up two tasks to run independently.
