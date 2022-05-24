@@ -6,7 +6,7 @@
 
 为了使用 Zigbee2MQTT，我们需要以下硬件：
 
-1. TTGO Zigbee2MQTT
+1. LilyGo Zigbee2MQTT
 
 2. 可以运行 MQTT broker 和 Home Assistant 的服务器(例如树莓派)
 
@@ -15,22 +15,14 @@
 设置并启动 Zigbee2MQTT
 ----------------------
 
-设置连到的 MQTT 服务器
-~~~~~~~~~~~~~~~~~~~~~~
-
-修改 :code:`examples/zigbee2mqtt/main/app_config.h`，例如：
-
-.. literalinclude:: ../../examples/zigbee2mqtt/main/app_config.h
-    :linenos:
-    :language: c
-    :lines: 16-19
+参考 :doc:`user-guide/zigbee2mqtt`.
 
 连接设备
 --------
 
 为您的设备搜索支持的设备并按照说明进行配对。
 
-一旦您在日志中看到类似于下面的内容，您的设备就已配对，您可以开始使用前端和 MQTT 消息来控制它。
+一旦您在日志中看到类似于下面的内容，您的设备就已配对，您可以开始使用 MQTT 消息来控制它。
 
 ::
 

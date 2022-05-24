@@ -1,18 +1,18 @@
 mosquitto
 =========
 
-apt安装
--------
+apt
+----
 
 .. code-block:: shell
 
     sudo apt-get update
     sudo apt-get install mosquitto
 
-配置
-----
+Configure
+----------
 
-修改 :code:`/etc/mosquitto/mosquitto.conf` 文件，内容如下
+Modify the :code:`/etc/mosquitto/mosquitto.conf` file, the content is as follows
 
 .. code-block::
 
@@ -34,8 +34,8 @@ apt安装
 
     port 1883
 
-测试
-----
+Test
+-----
 
 .. image:: ../../_static/user-guide/mosquitto/connect-mqtt.png
 

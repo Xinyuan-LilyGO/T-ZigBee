@@ -6,7 +6,7 @@ Requirement
 
 In order to use Zigbee2MQTT, we need the following hardware:
 
-1. TTGO Zigbee2MQTT
+1. LilyGo Zigbee2MQTT
 
 2. A server that can run MQTT broker and Home Assistant (e.g. Raspberry Pi)
 
@@ -18,12 +18,7 @@ Set up and start Zigbee2MQTT
 Connect to MQTT server
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Modify :code:`examples/zigbee2mqtt/main/app_config.h`, for example:
-
-.. literalinclude:: ../../examples/zigbee2mqtt/main/app_config.h
-    :linenos:
-    :language: c
-    :lines: 16-19
+See :doc:`user-guide/zigbee2mqtt`.
 
 Connect the device
 ------------------
