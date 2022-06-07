@@ -24,6 +24,12 @@
 /***        type definitions                                                ***/
 /******************************************************************************/
 
+typedef struct hci_data
+{
+    uint8_t data[RD_BUF_SIZE];
+    size_t size;
+} hci_data_t ;
+
 /******************************************************************************/
 /***        local function prototypes                                       ***/
 /******************************************************************************/
@@ -67,7 +73,7 @@ void uart_init(void)
     //Set UART pins (using UART0 default pins ie no changes.)
     uart_set_pin(UART_NUM_1, GPIO_NUM_18, GPIO_NUM_19, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 
-    recv_queue = xQueueCreate(10, RD_BUF_SIZE);
+    recv_queue = xQueueCreate(10, sizeof(hci_data_t));
 
     //Create a task to handler UART event from ISR
     xTaskCreate(uart_event_task, "uart_event_task", 4096, NULL, 12, &uart_handle);
@@ -78,9 +84,16 @@ void uart_send(const void* src, size_t size)
     uart_write_bytes(UART_NUM_1, src, size);
 }
 
-BaseType_t uart_recv(uint8_t *data, size_t size)
+
+BaseType_t uart_recv(uint8_t *data, size_t *size)
 {
-    return xQueueReceive(recv_queue, data, portMAX_DELAY);
+    BaseType_t res;
+    hci_data_t hci_data;
+    bzero(&hci_data, sizeof(hci_data_t));
+    res = xQueueReceive(recv_queue, &hci_data, portMAX_DELAY);
+    memcpy(data, hci_data.data, hci_data.size);
+    *size = hci_data.size;
+    return res;
 }
 
 
@@ -100,14 +113,15 @@ static void uart_event_task(void *pvParameters)
 {
     uart_event_t event;
     // size_t buffered_size = 0;
-    uint8_t recvdata[RD_BUF_SIZE] = { 0 };
+    // uint8_t recvdata[RD_BUF_SIZE] = { 0 };
+    hci_data_t hci_data;
 
     for(;;)
     {
         //Waiting for UART event.
         if(xQueueReceive(uart_queue, (void * )&event, (portTickType)portMAX_DELAY))
         {
-            bzero(recvdata, RD_BUF_SIZE);
+            // bzero(recvdata, RD_BUF_SIZE);
             ESP_LOGI(TAG, "uart[%d] event:", UART_NUM_1);
             switch(event.type)
             {
@@ -117,8 +131,10 @@ static void uart_event_task(void *pvParameters)
                 be full.*/
                 case UART_DATA:
                     ESP_LOGI(TAG, "[UART DATA]: %d", event.size);
-                    uart_read_bytes(UART_NUM_1, recvdata, event.size, portMAX_DELAY);
-                    xQueueSend(recv_queue, recvdata, 10);
+                    bzero(&hci_data, sizeof(hci_data_t));
+                    hci_data.size = event.size;
+                    uart_read_bytes(UART_NUM_1, hci_data.data, event.size, portMAX_DELAY);
+                    xQueueSend(recv_queue, &hci_data, 10);
                 break;
 
                 //Event of HW FIFO overflow detected

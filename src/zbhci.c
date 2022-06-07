@@ -333,7 +333,7 @@ static void zbhci_HandleMacAddrInd();
 static void zbhci_HandleNodeLeaveInd();
 #endif
 
-static int32_t zbhci_CmdUnpack(uint8_t *src, size_t size, uint16_t *pu16Type, uint16_t *pu16Length, uint8_t *pu8Data);
+static int32_t zbhci_CmdUnpack(uint8_t data, uint16_t *pu16Type, uint16_t *pu16Length, uint8_t *pu8Data);
 
 static void zbhciCmdHandler(uint16_t u16MsgType, uint16_t u16MsgLen, uint8_t *pu8Payload, void *puPayload);
 
@@ -1899,16 +1899,21 @@ static void zbhci_task(void * pvParameters)
     uint8_t  au8Payload[64]  = { 0 };
     ts_HciMsg sHciMsg;
     uint8_t  recvdata[64]    = { 0 };
+    size_t size = 0;
 
     for( ;; )
     {
-        if (uart_recv(recvdata, 256))
+        if (uart_recv(recvdata, &size))
         {
-            if (!zbhci_CmdUnpack(recvdata, 256, &sHciMsg.u16MsgType, &sHciMsg.u16MsgLength, au8Payload))
+            for (size_t i = 0; i < size; i++)
             {
-                zbhciCmdHandler(sHciMsg.u16MsgType, sHciMsg.u16MsgLength, au8Payload, &sHciMsg.uPayload);
-                xQueueSend(msg_queue, &sHciMsg, portMAX_DELAY);
+                if (!zbhci_CmdUnpack(recvdata[i], &sHciMsg.u16MsgType, &sHciMsg.u16MsgLength, au8Payload))
+                {
+                    zbhciCmdHandler(sHciMsg.u16MsgType, sHciMsg.u16MsgLength, au8Payload, &sHciMsg.uPayload);
+                    xQueueSend(msg_queue, &sHciMsg, portMAX_DELAY);
+                }
             }
+
         }
         else
         {
@@ -1961,71 +1966,68 @@ static void zbhci_Tx(uint16_t u16Type, uint16_t u16Length, uint8_t *pu8Data)
     uart_send(uartTxBuf, p - uartTxBuf);
 }
 
-static int32_t zbhci_CmdUnpack(uint8_t *src, size_t size, uint16_t *pu16Type, uint16_t *pu16Length, uint8_t *pu8Data)
+static int32_t zbhci_CmdUnpack(uint8_t data, uint16_t *pu16Type, uint16_t *pu16Length, uint8_t *pu8Data)
 {
     static uint16_t u16Bytes = 0;
     static uint8_t status = 0;
-    uint8_t crc8 = 0;
+    static uint8_t crc8 = 0;
 
-    for (size_t i = 0; i < size; i++)
+    // printf("recv: 0x%x\n", data);
+    switch (status)
     {
-        // printf("recv: 0x%x\n", src[i]);
-        switch (status)
-        {
-            case 0:
-                if (src[i] == 0x55)
+        case 0:
+            if (data == 0x55)
+            {
+                u16Bytes = 0;
+                status++;
+            }
+        break;
+
+        case 1:
+            *pu16Type = data << 8 & 0xFF00;
+            status++;
+        break;
+
+        case 2:
+            *pu16Type |= data & 0x00FF;
+            status++;
+        break;
+
+        case 3:
+            *pu16Length = data << 8 & 0xFF00;
+            status++;
+        break;
+
+        case 4:
+            *pu16Length |= data & 0x00FF;
+            status++;
+        break;
+
+        case 5:
+            crc8 = data;
+            status++;
+        break;
+
+        case 6:
+            if (u16Bytes < *pu16Length)
+                pu8Data[u16Bytes++] = data;
+            if (u16Bytes == *pu16Length &&data == 0xAA)
+            {
+                if (crc8 == zbhci_CRC8Calculate(*pu16Type, *pu16Length, pu8Data))
                 {
-                    u16Bytes = 0;
-                    status++;
+                    status = 0;
+                    return 0;
                 }
-            break;
-
-            case 1:
-                *pu16Type = src[i] << 8 & 0xFF00;
-                status++;
-            break;
-
-            case 2:
-                *pu16Type |= src[i] & 0x00FF;
-                status++;
-            break;
-
-            case 3:
-                *pu16Length = src[i] << 8 & 0xFF00;
-                status++;
-            break;
-
-            case 4:
-                *pu16Length |= src[i] & 0x00FF;
-                status++;
-            break;
-
-            case 5:
-                crc8 = src[i];
-                status++;
-            break;
-
-            case 6:
-                if (u16Bytes < *pu16Length)
-                    pu8Data[u16Bytes++] = src[i];
-                if (u16Bytes == *pu16Length &&src[i] == 0xAA)
+                else
                 {
-                    if (crc8 == zbhci_CRC8Calculate(*pu16Type, *pu16Length, pu8Data))
-                    {
-                        status = 0;
-                        return 0;
-                    }
-                    else
-                    {
-                        ESP_LOGI(TAG, "error\n");
-                        status = 0;
-                    }
+                    ESP_LOGI(TAG, "error\n");
+                    status = 0;
                 }
-            break;
+            }
+        break;
 
-            default:
-            break;
-        }
+        default:
+        break;
     }
     return -1;
 }
