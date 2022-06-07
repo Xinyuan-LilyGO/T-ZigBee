@@ -93,6 +93,13 @@ void setup()
                             5,         /** Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest. */
                             NULL ,
                             ARDUINO_RUNNING_CORE);
+    xTaskCreatePinnedToCore(ledTask,
+                            "led",   /** A name just for humans */
+                            2048,      /** This stack size can be checked & adjusted by reading the Stack Highwater */
+                            NULL,
+                            4,         /** Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest. */
+                            NULL ,
+                            ARDUINO_RUNNING_CORE);
     vTaskDelay(100 / portTICK_PERIOD_MS);
     zbhci_NetworkStateReq();
     btn.attachClick(handleClick);
@@ -103,23 +110,33 @@ void setup()
 void loop()
 {
     btn.tick();
-    if (sta_status == "n/a")
+    delay(10);
+}
+
+
+void ledTask(void *pvParameters)
+{
+    while (1)
     {
-        digitalWrite(CONFIG_BLUE_LIGHT_PIN, LOW);
-        delay(1000);
-        digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
-        delay(1000);
-    }
-    else if (sta_status == "running" && !get_mqtt_status() )
-    {
-        digitalWrite(CONFIG_BLUE_LIGHT_PIN, LOW);
-        delay(3000);
-        digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
-        delay(3000);
-    }
-    else if (sta_status == "running" && get_mqtt_status())
-    {
-        digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
+        if (sta_status == "n/a")
+        {
+            digitalWrite(CONFIG_BLUE_LIGHT_PIN, LOW);
+            delay(1000);
+            digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
+            delay(1000);
+        }
+        else if (sta_status == "running" && !get_mqtt_status() )
+        {
+            digitalWrite(CONFIG_BLUE_LIGHT_PIN, LOW);
+            delay(3000);
+            digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
+            delay(3000);
+        }
+        else if (sta_status == "running" && get_mqtt_status())
+        {
+            digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
+            delay(100);
+        }
     }
 }
 
