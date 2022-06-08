@@ -21,7 +21,7 @@ the firmware.
 .. note::
 
     Because the power supply of TLSR8258 is controlled by GPIO of :code:`ESP32-C3`,
-    before programming :code:`TLSR8258`, please program `examples/factory_test <../../../../. ./examples/factory_test>`_
+    before programming :code:`TLSR8258`, please program `examples/factory_test <https://github.com/Xinyuan-LilyGO/T-ZigBee/tree/main/examples/factory_test>`_
     This program to power on :code:`TLSR8258`.
 
 ESP32-C3
@@ -44,7 +44,7 @@ TLSR8258
 
 .. note::
 
-    :code:`T-ZigBee` has been programmed with `sampleGW_8258_20220302.bin <../../../../../firmware/sampleGW_8258_20220302.bin>`_,
+    :code:`T-ZigBee` has been programmed with `sampleGW_8258_20220302.bin <https://github.com/Xinyuan-LilyGO/T-ZigBee/blob/main/firmware/sampleGW_8258_20220302.bin>`_,
     if not correct :code:` TLSR8258` makes other functional changes, it is not
     recommended to burn the firmware of :code:`TLSR8258` at will.
 

@@ -20,7 +20,7 @@ ESP32-C3虽然支持使用USB下载固件，但是在一些开发环境下，无
 .. note::
 
     因为TLSR8258的电源受 :code:`ESP32-C3` 的GPIO控制，在烧录 :code:`TLSR8258` 前，
-    请先烧录 `examples/factory_test <../../../../../examples/factory_test>`_
+    请先烧录 `examples/factory_test <https://github.com/Xinyuan-LilyGO/T-ZigBee/tree/main/examples/factory_test>`_
     这个程序，以打开 :code:`TLSR8258` 的电源。
 
 ESP32-C3
@@ -43,7 +43,7 @@ TLSR8258
 
 .. note::
 
-    :code:`T-ZigBee` 出厂时，已经烧录了 `sampleGW_8258_20220302.bin <../../../../../firmware/sampleGW_8258_20220302.bin>`_，
+    :code:`T-ZigBee` 出厂时，已经烧录了 `sampleGW_8258_20220302.bin <https://github.com/Xinyuan-LilyGO/T-ZigBee/blob/main/firmware/sampleGW_8258_20220302.bin>`_，
     如果不对 :code:`TLSR8258` 做其他功能改动，不建议随意烧录 :code:`TLSR8258` 的固件。
 
 1. 连接 :code:`T-U2T` 连接到 :code:`T-ZigBee`
