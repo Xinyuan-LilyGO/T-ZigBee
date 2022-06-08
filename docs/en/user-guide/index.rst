@@ -7,3 +7,4 @@ User Guide
     zigbee2mqtt <zigbee2mqtt.rst>
     mosquitto <mosquitto.rst>
     Home Assistant <home-assistant.rst>
+    Burning Guide <burning.rst>
