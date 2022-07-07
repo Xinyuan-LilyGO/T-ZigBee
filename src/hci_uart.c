@@ -7,7 +7,8 @@
 
 #include <driver/uart.h>
 #include <driver/gpio.h>
-#include "esp_log.h"
+// #include "esp_log.h"
+#include "esp32-hal-log.h"
 
 #include <string.h>
 // #include <termios.h>
@@ -122,7 +123,7 @@ static void uart_event_task(void *pvParameters)
         if(xQueueReceive(uart_queue, (void * )&event, (portTickType)portMAX_DELAY))
         {
             // bzero(recvdata, RD_BUF_SIZE);
-            ESP_LOGI(TAG, "uart[%d] event:", UART_NUM_1);
+            log_i("uart[%d] event:", UART_NUM_1);
             switch(event.type)
             {
                 //Event of UART receving data
@@ -130,7 +131,7 @@ static void uart_event_task(void *pvParameters)
                 other types of events. If we take too much time on data event, the queue might
                 be full.*/
                 case UART_DATA:
-                    ESP_LOGI(TAG, "[UART DATA]: %d", event.size);
+                    log_i("[UART DATA]: %d", event.size);
                     bzero(&hci_data, sizeof(hci_data_t));
                     hci_data.size = event.size;
                     uart_read_bytes(UART_NUM_1, hci_data.data, event.size, portMAX_DELAY);
@@ -139,7 +140,7 @@ static void uart_event_task(void *pvParameters)
 
                 //Event of HW FIFO overflow detected
                 case UART_FIFO_OVF:
-                    ESP_LOGI(TAG, "hw fifo overflow");
+                    log_i("hw fifo overflow");
                     // If fifo overflow happened, you should consider adding flow control for your application.
                     // The ISR has already reset the rx FIFO,
                     // As an example, we directly flush the rx buffer here in order to read more data.
@@ -149,7 +150,7 @@ static void uart_event_task(void *pvParameters)
 
                 //Event of UART ring buffer full
                 case UART_BUFFER_FULL:
-                    ESP_LOGI(TAG, "ring buffer full");
+                    log_i("ring buffer full");
                     // If buffer full happened, you should consider encreasing your buffer size
                     // As an example, we directly flush the rx buffer here in order to read more data.
                     uart_flush_input(UART_NUM_1);
@@ -158,21 +159,21 @@ static void uart_event_task(void *pvParameters)
 
                 //Event of UART RX break detected
                 case UART_BREAK:
-                    ESP_LOGI(TAG, "uart rx break");
+                    log_i("uart rx break");
                 break;
 
                 //Event of UART parity check error
                 case UART_PARITY_ERR:
-                    ESP_LOGI(TAG, "uart parity error");
+                    log_i("uart parity error");
                 break;
 
                 //Event of UART frame error
                 case UART_FRAME_ERR:
-                    ESP_LOGI(TAG, "uart frame error");
+                    log_i("uart frame error");
                 break;
 
                 default:
-                    ESP_LOGI(TAG, "uart event type: %d", event.type);
+                    log_i("uart event type: %d", event.type);
                 break;
             }
         }

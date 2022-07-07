@@ -7,6 +7,7 @@
 #include "hci_display.h"
 
 #include "esp_log.h"
+#include "esp32-hal-log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -2020,7 +2021,7 @@ static int32_t zbhci_CmdUnpack(uint8_t data, uint16_t *pu16Type, uint16_t *pu16L
                 }
                 else
                 {
-                    ESP_LOGI(TAG, "error\n");
+                    log_w("error\n");
                     status = 0;
                 }
             }
