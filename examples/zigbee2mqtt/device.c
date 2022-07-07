@@ -254,6 +254,7 @@ void lilygo_light_add(uint64_t u64IeeeAddr)
     cJSON_AddStringToObject(json, "cmd_t", "~/set");
     cJSON_AddStringToObject(json, "stat_t", "~/state");
     cJSON_AddStringToObject(json, "schema", "json");
+    cJSON_AddStringToObject(json, "unique_id", ieeeaddr_str);
 
     char *str = cJSON_Print(json);
     app_mqtt_client_publish(topic ,str);

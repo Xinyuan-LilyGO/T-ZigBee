@@ -53,7 +53,7 @@ uint32_t mqtt_port = 0;
  */
 OneButton btn = OneButton(CONFIG_USR_BUTTON_PIN, /** Input pin for the button */
                           true,                  /** Button is active LOW */
-                          true);                 /** Enable internal pull-up resistor */
+                          false);                 /** Enable internal pull-up resistor */
 
 void setup()
 {
