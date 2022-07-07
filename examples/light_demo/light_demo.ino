@@ -43,6 +43,8 @@ void setup()
     digitalWrite(CONFIG_BLUE_LIGHT_PIN, LOW);
 
     btn.attachClick(handleClick);
+    btn.setPressTicks(3000);
+    btn.attachLongPressStart(handleLongPress);
 
     msg_queue = xQueueCreate(10, sizeof(ts_HciMsg));
     zbhci_Init(msg_queue);
@@ -62,25 +64,51 @@ void setup()
 }
 
 
-ts_DstAddr sDstAddr;
-
-
-
 void loop()
 {
     btn.tick();
 }
 
 uint8_t ledState = 0;
+uint8_t netState = 0;
 
 void handleClick(void)
 {
+    ts_DstAddr sDstAddr;
+
     ledState = !ledState;
     sDstAddr.u16DstAddr = 0x0000;
-    zbhci_ZclSendReportCmd(0x02, sDstAddr, 1, 1, 0, 1, 0x0006, 0x0000, ZCL_DATA_TYPE_BOOLEAN, 1, &ledState);
-    delay(100);
+    if (netState == 1)
+    {
+        zbhci_ZclSendReportCmd(0x02, sDstAddr, 1, 1, 0, 1, 0x0006, 0x0000, ZCL_DATA_TYPE_BOOLEAN, 1, &ledState);
+        delay(100);
+    }
+    else
+    {
+        Serial.println("Not joined the zigbee network");
+    }
+
     digitalWrite(CONFIG_BLUE_LIGHT_PIN, ledState);
 }
+
+
+void handleLongPress()
+{
+    if (netState == 0)
+    {
+        Serial.println("Joining the zigbee network");
+        zbhci_BdbCommissionSteer();
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
+    else if (netState == 1)
+    {
+        Serial.println("leave the zigbee network");
+        zbhci_BdbFactoryReset();
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        netState = 0;
+    }
+}
+
 
 void zbhciTask(void *pvParameters)
 {
@@ -99,14 +127,20 @@ void zbhciTask(void *pvParameters)
                 break;
 
                 case ZBHCI_CMD_NETWORK_STATE_RSP:
-                    if (sHciMsg.uPayload.sNetworkStateRspPayloasd.u16NwkAddr == 0xFFFF)
+                    if (sHciMsg.uPayload.sNetworkStateRspPayloasd.u16NwkAddr == 0x0000)
                     {
-                        zbhci_BdbCommissionSteer();
-                        vTaskDelay(100 / portTICK_PERIOD_MS);
+                        zbhci_BdbFactoryReset();
+                        vTaskDelay(1000 / portTICK_PERIOD_MS);
+                        zbhci_NetworkStateReq();
+                    }
+                    else if (sHciMsg.uPayload.sNetworkStateRspPayloasd.u16NwkAddr != 0xFFFF)
+                    {
+                        netState = 1;
                     }
                 break;
 
                 case ZBHCI_CMD_NETWORK_STATE_REPORT:
+                    netState = 1;
                     sDstAddr.u16DstAddr = 0x0000;
                     zbhci_ZclSendReportCmd(0x02, sDstAddr, 1, 1, 0, 1, 0x0000, 0x0005, ZCL_DATA_TYPE_CHAR_STR, sizeof(au8ManufacturerName), (uint8_t *)&au8ManufacturerName);
                 break;
