@@ -5,6 +5,7 @@
 
 #include "app_config.h"
 #include "app_mqtt.h"
+#include "app_db.h"
 #include "zbhci.h"
 
 #include "mqtt_client.h"
@@ -147,6 +148,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                 memcpy(ps_sub_topic->topic, PERMIT_JOIN_TOPIC, strlen(PERMIT_JOIN_TOPIC));
                 ps_sub_topic->handle = permit_join_handler;
             }
+            app_db_recover();
             mqtt_status = true;
         break;
 
