@@ -563,6 +563,7 @@ static void handle_lilygo_light(const char * topic, const char *data)
 
     // zbhci_ZclAttrWrite(0x02, sDstAddr, 1, 1, 0, 0x0006, 1, &sAttrList);
     cJSON_Delete(json);
+    delay(100);
 }
 
 /******************************************************************************/
