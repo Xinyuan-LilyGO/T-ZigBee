@@ -72,15 +72,18 @@ Please download `TlsrComSwireWriter <https://github.com/pvvx/TlsrComSwireWriter>
 Ordering Information
 ---------------------
 
-========= ===================== ================
+========= ===================== ================ ================
 Product   Order channel
-========= ======================================
-T-ZigBee  t-zigbee_AliExpress_  t-zigbee_TaoBao_
---------- --------------------- ----------------
-T-U2T     t-u2t_AliExpress_     t-u2t_TaoBao_
-========= ===================== ================
+========= ====================================== ================
+T-ZigBee  t-zigbee_AliExpress_  t-zigbee_TaoBao_ t-zigbee_Amazon_
+--------- --------------------- ---------------- ----------------
+T-U2T     t-u2t_AliExpress_     t-u2t_TaoBao_    t-u2t_Amazon_
+--------- --------------------- ---------------- ----------------
+========= ===================== ================ ================
 
 .. _t-zigbee_AliExpress: https://www.aliexpress.com/item/3256803996075052.html
 .. _t-zigbee_TaoBao: https://item.taobao.com/item.htm?spm=a1z10.1-c-s.w4004-24322072003.14.59cd19e104w9za&id=673454311484
-.. _t-u2t_AliExpress: https://www.aliexpress.com/item/3256802262618023.htm
+.. _t-zigbee_Amazon: https://www.amazon.com/dp/B0B4NWMSGR?ref=myi_title_dp&th=1
+.. _t-u2t_AliExpress: https://www.aliexpress.com/item/3256802262618023.html
 .. _t-u2t_TaoBao: https://item.taobao.com/item.htm?spm=a1z10.5-c-s.w4002-24322072023.27.26b01c38ExJUUl&id=641950617122
+.. _t-u2t_Amazon: https://www.amazon.com/dp/B0B4NWJSDX?ref=myi_title_dp&th=1
