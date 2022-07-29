@@ -369,6 +369,12 @@ void main_loop(void)
                         {
                             lilygo_light_delete(device->u64IeeeAddr);
                         }
+                        else if (!strncmp((const char *)device->au8ModelId,
+                                            "LILYGO.Sensor",
+                                            strlen("LILYGO.Sensor")))
+                        {
+                            lilygo_sensor_delete(device->u64IeeeAddr);
+                        }
                         memset(device, 0, sizeof(device_node_t));
                         app_db_save();
                     }
@@ -410,6 +416,13 @@ void main_loop(void)
                                     {
                                         app_db_save();
                                         lilygo_light_add(device->u64IeeeAddr);
+                                    }
+                                    else if (!strncmp((const char *)sHciMsg.uPayload.sZclReportMsgRcvPayload.asAttrList[i].uAttrData.au8AttrData,
+                                                      "LILYGO.Sensor",
+                                                      strlen("LILYGO.Sensor")))
+                                    {
+                                        app_db_save();
+                                        lilygo_sensor_add(device->u64IeeeAddr);
                                     }
                                 }
                             }
@@ -476,6 +489,14 @@ void main_loop(void)
                                                               device->device_data.wsdcgq11lm.i16Humidity,
                                                               device->device_data.wsdcgq11lm.i16Pressure);
                                     }
+                                    else if (!strncmp((const char *)device->au8ModelId,
+                                                     "LILYGO.Sensor",
+                                                      strlen("LILYGO.Sensor")))
+                                    {
+                                            lilygo_sensor_report(device->u64IeeeAddr,
+                                                                 device->device_data.sensor.i16Temperature,
+                                                                 device->device_data.sensor.i16Humidity);
+                                    }
                                 }
                             }
                         }
@@ -521,6 +542,14 @@ void main_loop(void)
                                                               device->device_data.wsdcgq11lm.i16Temperature,
                                                               device->device_data.wsdcgq11lm.i16Humidity,
                                                               device->device_data.wsdcgq11lm.i16Pressure);
+                                    }
+                                    else if (!strncmp((const char *)device->au8ModelId,
+                                                     "LILYGO.Sensor",
+                                                     strlen("LILYGO.Sensor")))
+                                    {
+                                            lilygo_sensor_report(device->u64IeeeAddr,
+                                                                 device->device_data.sensor.i16Temperature,
+                                                                 device->device_data.sensor.i16Humidity);
                                     }
                                 }
                             }

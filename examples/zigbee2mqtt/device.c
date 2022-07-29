@@ -11,6 +11,7 @@
 #include "cJSON.h"
 #include "esp_log.h"
 
+#include <Arduino.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -304,6 +305,88 @@ void lilygo_light_report(uint64_t u64IeeeAddr, uint8_t u8OnOff)
     // cJSON_AddStringToObject(json, "state", u8OnOff ? "ON": "OFF");
     char *str = cJSON_Print(json);
     // printf("topic: %s, data: %s\n", topic, str);
+    app_mqtt_client_publish(topic ,str);
+    cJSON_Delete(json);
+}
+
+void lilygo_sensor_add(uint64_t u64IeeeAddr)
+{
+    char ieeeaddr_str[20] = { 0 };
+    cJSON *json = cJSON_CreateObject();
+    cJSON *device = cJSON_CreateObject();
+    cJSON *identifiers = cJSON_CreateArray();
+
+    if (!json) return ;
+    if (!device) goto OUT;
+    if (!identifiers) goto OUT1;
+
+    snprintf(ieeeaddr_str, sizeof(ieeeaddr_str) - 1, "0x%016llx", u64IeeeAddr);
+
+    cJSON_AddItemToArray(identifiers, cJSON_CreateString(ieeeaddr_str));
+    cJSON_AddItemToObject(device, "identifiers", identifiers);
+    cJSON_AddStringToObject(device, "manufacturer", "LILYGO");
+    cJSON_AddStringToObject(device, "model", "LILYGO temp/humi sensor");
+    cJSON_AddStringToObject(device, "name", "LILYGO.Sensor");
+    cJSON_AddStringToObject(device, "sw_version", "0.1.0");
+    cJSON_AddItemToObject(json, "device", device);
+    cJSON_AddStringToObject(json, "name", "LILYGO.Sensor");
+    cJSON_AddStringToObject(json, "schema", "json");
+    cJSON_AddStringToObject(json, "uniq_id", ieeeaddr_str);
+
+    cJSON *json_humidity = cJSON_Duplicate(json, 1);
+    if (json_humidity)
+    {
+        sub_humidity(u64IeeeAddr, json_humidity);
+        cJSON_Delete(json_humidity);
+    }
+    cJSON *json_temperature = cJSON_Duplicate(json, 1);
+    if (json_temperature)
+    {
+        sub_temperature(u64IeeeAddr, json_temperature);
+        cJSON_Delete(json_temperature);
+    }
+    ESP_LOGI("Zigbee2MQTT", "Successfully interviewed '%#016llx', device has successfully been paired", u64IeeeAddr);
+OUT:
+    cJSON_Delete(json);
+    return;
+OUT1:
+    cJSON_Delete(json);
+    cJSON_Delete(device);
+}
+
+
+void lilygo_sensor_delete(uint64_t u64IeeeAddr)
+{
+    char ieeeaddr_str[20] = { 0 };
+    char topic[128] = { 0 };
+
+    snprintf(ieeeaddr_str, sizeof(ieeeaddr_str) - 1, "0x%016llx", u64IeeeAddr);
+
+    memset(topic, 0, sizeof(topic));
+    snprintf(topic, sizeof(topic) - 1, "homeassistant/sensor/%s/humidity/config", ieeeaddr_str);
+    app_mqtt_client_publish(topic ,"");
+
+    memset(topic, 0, sizeof(topic));
+    snprintf(topic, sizeof(topic) - 1, "homeassistant/sensor/%s/temperature/config", ieeeaddr_str);
+    app_mqtt_client_publish(topic ,"");
+}
+
+
+void lilygo_sensor_report(uint64_t u64IeeeAddr,
+                       int16_t  i16Temperature,
+                       int16_t  i16Humidity)
+{
+    char ieeeaddr_str[20] = { 0 };
+    char topic[128] = { 0 };
+
+    cJSON *json = cJSON_CreateObject();
+    snprintf(ieeeaddr_str, sizeof(ieeeaddr_str) - 1, "0x%016llx", u64IeeeAddr);
+    snprintf(topic, sizeof(topic) - 1, "zigbee2mqtt/%s", ieeeaddr_str);
+
+    cJSON_AddNumberToObject(json, "temperature", (double)i16Temperature/100);
+    cJSON_AddNumberToObject(json, "humidity",    (double)i16Humidity/100);
+    char *str = cJSON_Print(json);
+
     app_mqtt_client_publish(topic ,str);
     cJSON_Delete(json);
 }

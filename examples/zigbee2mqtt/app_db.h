@@ -40,6 +40,13 @@ typedef struct ts_light
     uint8_t  u8State;
 } ts_light;
 
+typedef struct ts_sensor
+{
+    uint8_t u8Ep;
+    int16_t i16Temperature;
+    int16_t i16Humidity;
+} ts_sensor;
+
 typedef struct device_node_t
 {
     uint64_t u64IeeeAddr;
@@ -52,6 +59,7 @@ typedef struct device_node_t
         ts_wsdcgq11lm wsdcgq11lm;
         ts_rtcgq11lm  rtcgq11lm;
         ts_light      light;
+        ts_sensor     sensor;
     } device_data;
 } device_node_t;
 
