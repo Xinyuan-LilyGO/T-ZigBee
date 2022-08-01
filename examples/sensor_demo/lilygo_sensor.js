@@ -18,9 +18,8 @@ const definition = {
     // when the device is controlled manually through the button on it.
     configure: async (device, coordinatorEndpoint, logger) => {
         const endpoint = device.getEndpoint(1);
-        await reporting.bind(endpoint, coordinatorEndpoint, ['msTemperatureMeasurement']);
+        await reporting.bind(endpoint, coordinatorEndpoint, ['msTemperatureMeasurement', 'msRelativeHumidity']);
         await reporting.temperature(endpoint);
-        await reporting.bind(endpoint, coordinatorEndpoint, ['msRelativeHumidity']);
         await reporting.humidity(endpoint);
     },
 };
