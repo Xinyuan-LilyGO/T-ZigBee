@@ -84,3 +84,5 @@ Add this external converter [lilygo_sensor.js](./lilygo_sensor.js) to Zigbee2MQT
 You can show the device on the sumenus of Zigbee2MQTT.
 ![](./docs/add-sensor-device_2.png)
 ![](./docs/add-sensor-device_3.png)
+
+Double-click the button on the upper side of the board to turn on/off automatic periodic reporting task.
