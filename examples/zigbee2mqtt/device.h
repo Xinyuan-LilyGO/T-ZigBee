@@ -51,6 +51,14 @@ void lilygo_light_delete(uint64_t u64IeeeAddr);
 
 void lilygo_light_report(uint64_t u64IeeeAddr, uint8_t u8OnOff);
 
+void lilygo_sensor_add(uint64_t u64IeeeAddr);
+
+void lilygo_sensor_report(uint64_t u64IeeeAddr,
+                          int16_t  i16Temperature,
+                          int16_t  i16Humidity);
+
+void lilygo_sensor_delete(uint64_t u64IeeeAddr);
+
 #ifdef __cplusplus
 }
 #endif
