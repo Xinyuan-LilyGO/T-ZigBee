@@ -47,7 +47,7 @@ Adjust the DIP switch:
 
 ![](../../docs/_static/upload_mode_c3.png)
 
-Upload the [sensor_demo.ino](./sensor_demo.ino) sketch
+Upload the [sensor_demo.ino](./sensor_demo.ino) sketch after installing DHT sensor library from Arduino Library Manager or platformio Libraries menu.
 
 ## Pair
 
