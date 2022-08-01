@@ -29,7 +29,7 @@ Select T-ZigBee as the node. Do the following.
 
 ### Make hardware
 
-Connect the T-Zigbee board with a dht11/dht22 sensor as follows.
+Connect the T-Zigbee board with a dht11/dht22 sensor as follows (ex. Port 4 of the board to Out pin of dht sensor).
 
 ![](./docs/t-zigbee_sensor_hardware.jpg)
 
