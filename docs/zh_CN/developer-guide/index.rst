@@ -4,3 +4,4 @@
 ========
 
 .. doxygenfile:: zbhci.h
+.. doxygenfile:: zbhci_commom.h

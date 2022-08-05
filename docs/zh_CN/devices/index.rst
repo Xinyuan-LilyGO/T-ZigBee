@@ -1,7 +1,7 @@
 Devices
 =======
 
-目前支持来自 1 个不同供应商的 2 个设备。
+目前支持来自 2 个不同供应商的 4 个设备。
 
 Xiaom
 -----
@@ -11,6 +11,15 @@ Xiaom
 
     Xiaomi RTCGQ11LM <RTCGQ11LM.rst>
     Xiaomi WSDCGQ11LM <WSDCGQ11LM.rst>
+
+LILYGO
+------
+
+.. toctree::
+    :maxdepth: 1
+
+    LILYGO light_demo <light_demo.rst>
+    LILYGO sensor_demo <sensor_demo.rst>
 
 ..
     Xiaom
