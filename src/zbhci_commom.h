@@ -236,6 +236,14 @@ typedef enum te_HCIMsgType
     ZBHCI_CMD_AF_DATA_SEND                   = 0x0300,
 } te_HCIMsgType;
 
+typedef enum te_AddrMode
+{
+    E_ADDR_MODE_BIND_ADDR  = 0x00, /**< for bind, without address and Endpoint @note Use with caution, it is invalid */
+    E_ADDR_MODE_GROUP_ADDR = 0x01, /**< for group-casting: only need group address */
+    E_ADDR_MODE_SHORT_ADDR = 0x02, /**< for unicasting with nwk address, with Endpoint */
+    E_ADDR_MODE_IEEE_ADDR  = 0x03, /**< for unicasting with ieee address, with Endpoint */
+} te_AddrMode;
+
 typedef enum te_MsgBdbCommissionTouchlinkRole
 {
     E_BDB_COMMISSION_TOUCHLINK_ROLE_INITIATOR = 1, /**< Touch link initiator */

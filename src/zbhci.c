@@ -618,7 +618,7 @@ void zbhci_BindingReq(uint64_t   u64SrcIEEEAddr,
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8SrcEndpoint,  u16MsgLength);
     U16_TO_BUFFER(&au8Payload[u16MsgLength], u16ClusterID,   u16MsgLength);
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode,  u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER(&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -646,7 +646,7 @@ void zbhci_UnbindingReq(uint64_t   u64SrcIEEEAddr,
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8SrcEndpoint,  u16MsgLength);
     U16_TO_BUFFER(&au8Payload[u16MsgLength], u16ClusterID,   u16MsgLength);
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode,  u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER(&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -829,7 +829,7 @@ void zbhci_ZclAttrRead(uint8_t    u8DstAddrMode,
     int32_t  i               = 0;
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -867,7 +867,7 @@ void zbhci_ZclAttrWrite(uint8_t     u8DstAddrMode,
     uint8_t  dataLen         = 0;
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -966,7 +966,7 @@ void zbhci_ZclSendReportCmd(uint8_t      u8DstAddrMode,
     uint8_t  au8Payload[256] = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -997,7 +997,7 @@ void zbhci_ZclBasicReset(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1024,7 +1024,7 @@ void zbhci_ZclGroupAdd(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[256] = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1052,7 +1052,7 @@ void zbhci_ZclGroupView(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1081,7 +1081,7 @@ void zbhci_ZclGroupGetMembership(uint8_t    u8DstAddrMode,
     int32_t  i               = 0;
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1111,7 +1111,7 @@ void zbhci_ZclGroupRemove(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13] = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1136,7 +1136,7 @@ void zbhci_ZclGroupRemoveAll(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11] = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1163,7 +1163,7 @@ void zbhci_ZclGroupAddIfIdentify(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[256] = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1191,7 +1191,7 @@ void zbhci_ZclIdentifyQuery(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1216,7 +1216,7 @@ void zbhci_ZclOnoffOn(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1240,7 +1240,7 @@ void zbhci_ZclOnoffOff(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x00 || u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1264,7 +1264,7 @@ void zbhci_ZclOnoffToggle(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1290,7 +1290,7 @@ void zbhci_ZclLevelMove2level(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[14]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1318,7 +1318,7 @@ void zbhci_ZclLevelMove(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1347,7 +1347,7 @@ void zbhci_ZclLevelStep(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[15]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1374,7 +1374,7 @@ void zbhci_ZclLevelStop(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[11]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1400,7 +1400,7 @@ void zbhci_ZclLevelMove2levelWithonoff(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[14]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1428,7 +1428,7 @@ void zbhci_ZclLevelMoveWithonoff(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1457,7 +1457,7 @@ void zbhci_ZclLevelStepWithonoff(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[15]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1484,7 +1484,7 @@ void zbhci_ZclLevelStopWithonoff(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[12]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1517,7 +1517,7 @@ void zbhci_ZclSceneAdd(uint8_t    u8DstAddrMode,
     int32_t  i               = 0;
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1556,7 +1556,7 @@ void zbhci_ZclSceneView(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[14]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1584,7 +1584,7 @@ void zbhci_ZclSceneRemove(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[14]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1611,7 +1611,7 @@ void zbhci_ZclSceneRemoveAll(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1638,7 +1638,7 @@ void zbhci_ZclSceneStore(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[14]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1666,7 +1666,7 @@ void zbhci_ZclSceneRecall(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[14]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1693,7 +1693,7 @@ void zbhci_ZclSceneGetMembership(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1721,7 +1721,7 @@ void zbhci_ZclColorMove2hue(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[15]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1751,7 +1751,7 @@ void zbhci_ZclColorMove2Color(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[17]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1780,7 +1780,7 @@ void zbhci_ZclColorMove2sat(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[14]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1808,7 +1808,7 @@ void zbhci_ZclColorMove2temp(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[15]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1836,7 +1836,7 @@ void zbhci_ZclOtaImageNotify(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[13]  = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
@@ -1868,7 +1868,7 @@ void zbhci_AfRawDataSend(uint8_t    u8DstAddrMode,
     uint8_t  au8Payload[256] = { 0 };
 
     U8_TO_BUFFER (&au8Payload[u16MsgLength], u8DstAddrMode, u16MsgLength);
-    if (u8DstAddrMode == 0x01)
+    if (u8DstAddrMode == 0x01 || u8DstAddrMode == 0x02)
     {
         U16_TO_BUFFER (&au8Payload[u16MsgLength], sDstAddr.u16DstAddr, u16MsgLength);
     }
