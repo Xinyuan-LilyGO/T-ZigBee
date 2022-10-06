@@ -3,7 +3,6 @@
 /***        include files                                                   ***/
 /******************************************************************************/
 
-#include "app_config.h"
 #include "app_mqtt.h"
 #include "app_db.h"
 #include "zbhci.h"

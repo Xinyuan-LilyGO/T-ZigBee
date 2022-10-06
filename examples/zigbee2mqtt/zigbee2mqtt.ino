@@ -30,7 +30,6 @@
 #include "zbhci.h"
 #include "app_db.h"
 #include "device.h"
-#include "app_config.h"
 #include "web.h"
 
 QueueHandle_t msg_queue;
