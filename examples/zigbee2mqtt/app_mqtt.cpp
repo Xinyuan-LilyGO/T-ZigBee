@@ -13,6 +13,7 @@
 #include "cJSON.h"
 
 #include <string.h>
+#include <Arduino.h>
 
 /******************************************************************************/
 /***        macro definitions                                               ***/
@@ -54,7 +55,7 @@ static ts_sub_topic * get_unused_topic(void);
 /***        exported variables                                              ***/
 /******************************************************************************/
 
-extern char mqtt_server[64];
+extern String mqtt_server;
 extern uint32_t mqtt_port;
 
 /******************************************************************************/
@@ -78,7 +79,7 @@ void app_mqtt_client_subscribe(const char *topic, int qos, sub_topic_handle_t ha
     ts_sub_topic *ps_sub_topic = get_unused_topic();
     if (!ps_sub_topic) return ;
 
-    ps_sub_topic->topic = calloc(1, strlen(topic) + 1);
+    ps_sub_topic->topic = (char *)calloc(1, strlen(topic) + 1);
     memcpy(ps_sub_topic->topic, topic, strlen(topic));
     ps_sub_topic->handle = handle;
 
@@ -100,7 +101,7 @@ void mqtt_app_start(void)
 {
     esp_mqtt_client_config_t mqtt_cfg = {
         // .uri = MQTT_BROKER_URL,
-        .host = (const char *)mqtt_server,
+        .host = mqtt_server.c_str(),
         .port = mqtt_port
     };
     topic_init();
@@ -143,7 +144,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
             ps_sub_topic = get_unused_topic();
             if (ps_sub_topic) 
             {
-                ps_sub_topic->topic = calloc(1, strlen(PERMIT_JOIN_TOPIC) + 1);
+                ps_sub_topic->topic = (char *)calloc(1, strlen(PERMIT_JOIN_TOPIC) + 1);
                 memcpy(ps_sub_topic->topic, PERMIT_JOIN_TOPIC, strlen(PERMIT_JOIN_TOPIC));
                 ps_sub_topic->handle = permit_join_handler;
             }
@@ -208,8 +209,8 @@ static void msg_handler(const char *topic, int32_t topic_len, const char *data, 
 {
     if (!topic || !data) return ;
 
-    char *topic_new = calloc(1, topic_len + 2);
-    char *data_new = calloc(1, data_len + 2);
+    char *topic_new = (char *)calloc(1, topic_len + 2);
+    char *data_new = (char *)calloc(1, data_len + 2);
 
     memcpy(topic_new, topic, topic_len);
     memcpy(data_new, data, data_len);

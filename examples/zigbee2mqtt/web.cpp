@@ -22,7 +22,7 @@ extern String ap_status;
 extern String ap_ssid;
 extern String sta_ssid;
 extern String sta_pwd;
-extern char mqtt_server[64];
+extern String mqtt_server;
 extern uint32_t mqtt_port;
 
 void web_init(void)
@@ -148,7 +148,7 @@ static void get_status()
 
     JsonObject mqtt_obj = rsp.createNestedObject("mqtt");
     mqtt_obj["status"] = get_mqtt_status() ? "connected" : "disconnect";
-    mqtt_obj["server"] = "192.168.3.10";
+    mqtt_obj["server"] = mqtt_server;
     mqtt_obj["port"] = mqtt_port;
 
     serializeJson(rsp, s);
@@ -178,14 +178,6 @@ static void get_config()
 
 static void handle_config()
 {
-    File htmlfile = LittleFS.open("/settings.html", "r");
-    if (!htmlfile)
-    {
-        Serial.println("file error");
-    }
-    server.streamFile(htmlfile, "text/html");
-    htmlfile.close();
-
     StaticJsonDocument<1024> doc;
 
     bool sta_flag = false;
@@ -199,6 +191,7 @@ static void handle_config()
 
     for ( uint8_t i = 0; i < server.args(); i++ )
     {
+        Serial.printf("name: %s\n", server.argName(i));
         Serial.printf("args: %s\n", server.arg(i));
         if (server.argName(i).equals("ssid"))
         {
@@ -227,6 +220,7 @@ static void handle_config()
             if (doc["mqtt"]["server"] != server.arg(i))
             {
                 doc["mqtt"]["server"] = server.arg(i);
+                mqtt_server = server.arg(i);
                 mqtt_flag = true;
             }
         }
@@ -251,6 +245,14 @@ static void handle_config()
         Serial.println(F("Failed to write to file"));
     }
     configfile.close();
+
+    File htmlfile = LittleFS.open("/settings.html", "r");
+    if (!htmlfile)
+    {
+        Serial.println("file error");
+    }
+    server.streamFile(htmlfile, "text/html");
+    htmlfile.close();
 
     if (sta_flag)
     {

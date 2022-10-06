@@ -39,7 +39,7 @@ String sta_ssid = "";
 String sta_pwd = "";
 String ap_status = "n/a";
 String ap_ssid = "";
-char mqtt_server[64];
+String mqtt_server = "";
 uint32_t mqtt_port = 0;
 
 #define CONFIG_USR_BUTTON_PIN 2
@@ -460,10 +460,9 @@ void load_db(void)
         Serial.println(F("Failed to read file, using default configuration"));
     configfile.close();
 
-    sta_ssid = (const char *)doc["sta"]["ssid"];
-    sta_pwd = (const char *)doc["sta"]["pwd"];
-    const char *server = (const char *)doc["mqtt"]["server"];
-    memcpy(mqtt_server, server, strlen(server));
+    sta_ssid = doc["sta"]["ssid"].as<const char *>();
+    sta_pwd = doc["sta"]["pwd"].as<const char *>();
+    mqtt_server = doc["mqtt"]["server"].as<const char *>();
     mqtt_port = doc["mqtt"]["port"].as<uint32_t>();
 }
 
