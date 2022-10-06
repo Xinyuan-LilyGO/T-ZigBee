@@ -744,14 +744,14 @@ void zbhci_MgmtNwkUpdateReq(uint16_t u16DstAddr,
 }
 
 
-void zbhci_NodesJoinedGetReq(uint8_t u8StartIdx)
+void zbhci_NodesJoinedGetReq(uint16_t u16StartIdx)
 {
     uint16_t u16MsgLength  = 0;
-    uint8_t  au8Payload[1] = { 0 };
+    uint8_t  au8Payload[2] = { 0 };
 
-    U8_TO_BUFFER (&au8Payload[u16MsgLength], u8StartIdx, u16MsgLength);
+    U16_TO_BUFFER (&au8Payload[u16MsgLength], u16StartIdx, u16MsgLength);
 
-    zbhci_Tx(ZBHCI_CMD_NODES_JOINED_GET_REQ, 0, NULL);
+    zbhci_Tx(ZBHCI_CMD_NODES_JOINED_GET_REQ, 2, au8Payload);
 }
 
 
@@ -2604,13 +2604,14 @@ static void zbhci_UnpackNodesJoinedGetRspPayload(ts_MsgNodesJoinedGetRspPayload 
 
     bzero(psPayload, sizeof(ts_MsgNodesJoinedGetRspPayload));
 
-    psPayload->u8Status    = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
-    psPayload->u8TotalCnt  = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
-    psPayload->u8StartIdx  = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    psPayload->u16TotalCnt = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
+    psPayload->u16StartIdx = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
     psPayload->u8ListCount = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    psPayload->u8Status    = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
     for (size_t n = 0; n < psPayload->u8ListCount; n++)
     {
-        psPayload->au64MacAddrList[n] = BUFFER_TO_U64_OFFSET(pu8Payload, u16Offset, u16Offset);
+        psPayload->au64MacAddrList[n]   = BUFFER_TO_U64_OFFSET(pu8Payload, u16Offset, u16Offset);
+        psPayload->au16ShortAddrList[n] = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
     }
 }
 

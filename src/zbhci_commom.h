@@ -517,11 +517,12 @@ typedef struct ts_MsgMgmtPermitJoinRspPayload
 
 typedef struct ts_MsgNodesJoinedGetRspPayload
 {
-    uint8_t  u8Status;           /**< The status of the request command. */
-    uint8_t  u8TotalCnt;         /**< The total count of the joined nodes. */
-    uint8_t  u8StartIdx;         /**< Starting index within the mac address list. */
+    uint16_t u16TotalCnt;        /**< The total count of the joined nodes. */
+    uint16_t u16StartIdx;        /**< Starting index within the mac address list. */
     uint8_t  u8ListCount;        /**< The count of the MAC address list in the current packet. */
+    uint8_t  u8Status;           /**< The status of the request command. */
     uint64_t au64MacAddrList[6]; /**< The MAC address list in the current packet. */
+    uint16_t au16ShortAddrList[6]; /**< The MAC address list in the current packet. */
 } ts_MsgNodesJoinedGetRspPayload;
 
 typedef struct ts_MsgTxRxPerformceTestRspPayload

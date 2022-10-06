@@ -288,16 +288,17 @@ void displayNodesJoinedGetRsp(ts_MsgNodesJoinedGetRspPayload *psPayload)
 {
     log_i("Type: %#04x", ZBHCI_CMD_NODES_JOINED_GET_RSP);
     log_i("  (Nodes Joined Get Rsp)");
-    log_i("  Status:     %#02x", psPayload->u8Status);
-    log_i("  Total:      %#02x", psPayload->u8TotalCnt);
-    log_i("  Start Idx:  %#02x", psPayload->u8StartIdx);
+    log_i("  Total:      %#04x", psPayload->u16TotalCnt);
+    log_i("  Start Idx:  %#04x", psPayload->u16StartIdx);
     log_i("  List Count: %#02x", psPayload->u8ListCount);
+    log_i("  Status:     %#02x", psPayload->u8Status);
     if (psPayload->u8ListCount)
     {
         log_i("  Mac Addr List:");
         for (size_t i = 0; i < psPayload->u8ListCount; i++)
         {
             log_i("    Node %d: %#016llx", i, psPayload->au64MacAddrList[i]);
+            log_i("    Node %d: %#04x", i, psPayload->au16ShortAddrList[i]);
         }
     }
 }

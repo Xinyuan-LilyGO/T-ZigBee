@@ -397,10 +397,10 @@ void zbhci_MgmtNwkUpdateReq(uint16_t u16DstAddr,
  * @brief get the MAC address form key pair table so as to get the information
  *        of the node which have joined the network
  *
- * @param[in] u8StartIdx Starting index for the requested elements of the joined
- *                       node list.
+ * @param[in] u16StartIdx Starting index for the requested elements of the joined
+ *                        node list.
  */
-void zbhci_NodesJoinedGetReq(uint8_t u8StartIdx);
+void zbhci_NodesJoinedGetReq(uint16_t u16StartIdx);
 
 /**
  * @brief send ON or OFF command in ONOFF cluster
