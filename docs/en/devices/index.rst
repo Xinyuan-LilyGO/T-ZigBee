@@ -13,6 +13,15 @@ Xiaom
     Xiaomi RTCGQ11LM <RTCGQ11LM.rst>
     Xiaomi WSDCGQ11LM <WSDCGQ11LM.rst>
 
+LILYGO
+------
+
+.. toctree::
+    :maxdepth: 1
+
+    LILYGO light_demo <light_demo.rst>
+    LILYGO sensor_demo <sensor_demo.rst>
+
 ..
     Xiaom
     -----

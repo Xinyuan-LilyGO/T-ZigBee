@@ -11,12 +11,12 @@ LILYGO sensor_demo
 
 .. |sensor_demo_img| image:: ../../_static/user-guide/burning/burning_successfully.jpg
 
-配对
-----
+Pairing
+--------
 
-按住节点设备顶部的按钮 3 秒钟以开始配对。 绿灯常亮，表示配对完成。
+Press and hold the button on the top of the node device for 3 seconds to start pairing. The green light is always on, indicating that the pairing is complete.
 
-感谢
-----
+Thank
+------
 
-本设备源代码由 `swkim01 <https://github.com/swkim01>`_ 提供
+The source code of this device is provided by `swkim01 <https://github.com/swkim01>`_.
