@@ -101,6 +101,8 @@ void setup()
                             ARDUINO_RUNNING_CORE);
     vTaskDelay(100 / portTICK_PERIOD_MS);
     zbhci_NetworkStateReq();
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    zbhci_NodesJoinedGetReq(0);
     btn.attachClick(handleClick);
     btn.attachDoubleClick(handleDoubleClick);
 }
@@ -283,7 +285,6 @@ void zbhciTask(void *pvParameters)
                                                 "LILYGO.Light",
                                                 strlen("LILYGO.Light")))
                                     {
-                                        printf("Light\n");
                                         lilygo_light_report(device->u64IeeeAddr, device->device_data.light.u8State);
                                     }
                                 }

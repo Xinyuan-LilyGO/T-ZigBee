@@ -99,10 +99,12 @@ void app_mqtt_client_publish(const char *topic, const char *data)
 
 void mqtt_app_start(void)
 {
+    char uri[128] = {0};
+    sprintf(uri, "mqtt://%s:%d", mqtt_server.c_str(), mqtt_port);
     esp_mqtt_client_config_t mqtt_cfg = {
-        // .uri = MQTT_BROKER_URL,
-        .host = mqtt_server.c_str(),
-        .port = mqtt_port
+        .uri = uri,
+        // .host = mqtt_server.c_str(),
+        // .port = mqtt_port
     };
     topic_init();
     client = esp_mqtt_client_init(&mqtt_cfg);
