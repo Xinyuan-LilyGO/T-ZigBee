@@ -636,6 +636,7 @@ typedef struct ts_MsgZclReportMsgRcvPayload
                                       message. */
     uint8_t     u8SrcEp;         /**< The source endpoint of the reporting
                                       message. */
+    uint8_t     u8DstEp;
     uint16_t    u16ClusterId;
     uint8_t     u8AttrNum;       /**< The number of attributes' reporting
                                       message to be received. */
@@ -760,7 +761,14 @@ typedef struct ts_MsgZclSceneGetMenbershipRspPayload
 
 typedef struct ts_MsgDataConfirmPayload
 {
+    uint8_t u8DstAddrMode;
     uint8_t u8SrcEndpoint;
+    uint8_t u8DstEndpoint;
+    struct {
+        uint64_t u64DstExtAddr;
+        uint16_t u16DstShortAddr;
+    } sDstExtAddr;
+    uint16_t u16ClusterId;
     uint8_t u8Status;
     uint8_t u8ApsCnt;
 } ts_MsgDataConfirmPayload;

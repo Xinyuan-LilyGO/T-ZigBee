@@ -761,9 +761,25 @@ void displayDataConfirm(ts_MsgDataConfirmPayload *psPayload)
 {
     log_i("Type: %#04x", ZBHCI_CMD_DATA_CONFIRM);
     log_i("  (Data Confirm)");
-    log_i("  Status:  %#02x", psPayload->u8Status);
-    log_i("  Src Ep:  %#02x", psPayload->u8SrcEndpoint);
-    log_i("  Aps Cnt: %#02x", psPayload->u8ApsCnt);
+    log_i("  Status:        %#02x", psPayload->u8Status);
+    log_i("  Dst Addr Mode: %#02x", psPayload->u8DstAddrMode);
+    if (psPayload->u8DstAddrMode == 0x01)
+    {
+        log_i("  Dst Addr:      %#04x", psPayload->sDstExtAddr.u16DstShortAddr);
+    }
+    else if (psPayload->u8DstAddrMode == 0x02)
+    {
+        log_i("  Dst Addr:      %#04x", psPayload->sDstExtAddr.u16DstShortAddr);
+        log_i("  Dst Ep:        %#02x", psPayload->u8DstEndpoint);
+    }
+    else if (psPayload->u8DstAddrMode == 0x03)
+    {
+        log_i("  Dst Addr:      %#016x", psPayload->sDstExtAddr.u64DstExtAddr);
+        log_i("  Dst Ep:        %#02x", psPayload->u8DstEndpoint);
+    }
+    log_i("  Src Ep:        %#02x", psPayload->u8SrcEndpoint);
+    log_i("  Cluster ID:    %#04x", psPayload->u16ClusterId);
+    log_i("  Aps Cnt:       %#02x", psPayload->u8ApsCnt);
 }
 
 

@@ -365,7 +365,7 @@ void zbhci_Init(QueueHandle_t queue)
 {
     msg_queue = queue;
     uart_init();
-    xTaskCreate(zbhci_task, "zbhci_task", 8012, NULL, 12, &zhbci_handle);
+    xTaskCreate(zbhci_task, "zbhci_task", 8192, NULL, 12, &zhbci_handle);
 }
 
 void zbhci_Deinit(void)
@@ -2817,9 +2817,10 @@ static void zbhci_UnpackZclReportMsgRcvPayload(ts_MsgZclReportMsgRcvPayload *psP
 
     bzero(psPayload, sizeof(ts_MsgZclReportMsgRcvPayload));
 
-    psPayload->u8SeqNum     = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
     psPayload->u16SrcAddr   = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
     psPayload->u8SrcEp      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    psPayload->u8DstEp      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    psPayload->u8SeqNum     = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
     psPayload->u16ClusterId = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
     psPayload->u8AttrNum    = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
     for (size_t n = 0; n < psPayload->u8AttrNum; n++)
@@ -3027,7 +3028,29 @@ static void zbhci_UnpackDataConfirmPayload(ts_MsgDataConfirmPayload *psPayload, 
 
     bzero(psPayload, sizeof(ts_MsgDataConfirmPayload));
 
-    psPayload->u8SrcEndpoint = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    psPayload->u8DstAddrMode = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    if (psPayload->u8DstAddrMode == 0x00)
+    {
+        psPayload->u8SrcEndpoint = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    }
+    else if (psPayload->u8DstAddrMode == 0x01)
+    {
+        psPayload->sDstExtAddr.u16DstShortAddr = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
+        psPayload->u8SrcEndpoint = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    }
+    else if (psPayload->u8DstAddrMode == 0x02)
+    {
+        psPayload->sDstExtAddr.u16DstShortAddr = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
+        psPayload->u8SrcEndpoint = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+        psPayload->u8DstEndpoint = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    }
+    else if (psPayload->u8DstAddrMode == 0x03)
+    {
+        psPayload->sDstExtAddr.u64DstExtAddr = BUFFER_TO_U64_OFFSET(pu8Payload, u16Offset, u16Offset);
+        psPayload->u8SrcEndpoint = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+        psPayload->u8DstEndpoint = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
+    }
+    psPayload->u16ClusterId  = BUFFER_TO_U16_OFFSET(pu8Payload, u16Offset, u16Offset);
     psPayload->u8Status      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
     psPayload->u8ApsCnt      = BUFFER_TO_U8_OFFSET (pu8Payload, u16Offset, u16Offset);
 }
