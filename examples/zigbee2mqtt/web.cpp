@@ -24,6 +24,8 @@ extern String sta_ssid;
 extern String sta_pwd;
 extern String mqtt_server;
 extern uint32_t mqtt_port;
+extern String mqtt_username;
+extern String mqtt_password;
 
 void web_init(void)
 {
@@ -150,6 +152,8 @@ static void get_status()
     mqtt_obj["status"] = get_mqtt_status() ? "connected" : "disconnect";
     mqtt_obj["server"] = mqtt_server;
     mqtt_obj["port"] = mqtt_port;
+    mqtt_obj["username"] = mqtt_username;
+    mqtt_obj["password"] = mqtt_password;
 
     serializeJson(rsp, s);
 
@@ -230,6 +234,24 @@ static void handle_config()
             {
                 doc["mqtt"]["port"] = server.arg(i);
                 mqtt_port = server.arg(i).toInt();
+                mqtt_flag = true;
+            }
+        }
+        else if (server.argName(i).equals("mqtt_username"))
+        {
+            if (doc["mqtt"]["username"] != server.arg(i))
+            {
+                doc["mqtt"]["username"] = server.arg(i);
+                mqtt_username = server.arg(i);
+                mqtt_flag = true;
+            }
+        }
+        else if (server.argName(i).equals("mqtt_password"))
+        {
+            if (doc["mqtt"]["password"] != server.arg(i))
+            {
+                doc["mqtt"]["password"] = server.arg(i);
+                mqtt_password = server.arg(i);
                 mqtt_flag = true;
             }
         }

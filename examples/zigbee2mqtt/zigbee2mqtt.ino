@@ -41,6 +41,8 @@ String ap_status = "n/a";
 String ap_ssid = "";
 String mqtt_server = "";
 uint32_t mqtt_port = 0;
+String mqtt_username = "";
+String mqtt_password = "";
 
 #define CONFIG_USR_BUTTON_PIN 2
 #define CONFIG_BLUE_LIGHT_PIN 3
@@ -465,6 +467,8 @@ void load_db(void)
     sta_pwd = doc["sta"]["pwd"].as<const char *>();
     mqtt_server = doc["mqtt"]["server"].as<const char *>();
     mqtt_port = doc["mqtt"]["port"].as<uint32_t>();
+    mqtt_username = doc["mqtt"]["username"].as<const char *>();
+    mqtt_password = doc["mqtt"]["password"].as<const char *>();
 }
 
 

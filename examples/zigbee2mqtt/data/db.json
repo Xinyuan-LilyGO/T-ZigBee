@@ -8,6 +8,8 @@
     },
     "mqtt": {
         "server": "192.168.3.10",
-        "port": 1883
+        "port": 1883,
+        "username": "test1",
+        "password": "123456"
     }
 }

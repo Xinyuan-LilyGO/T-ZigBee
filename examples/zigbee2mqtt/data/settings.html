@@ -72,6 +72,8 @@
                 document.getElementById("ap_password").value = obj.sta.pwd;
                 document.getElementById("server").value = obj.mqtt.server;
                 document.getElementById("port").value = obj.mqtt.port;
+                document.getElementById("mqtt_username").value = obj.mqtt.username;
+                document.getElementById("mqtt_password").value = obj.mqtt.password;
                 // var select1 = document.getElementById("channel");
                 // for (var i = 0; i< select1.children.length; i++) {
                 //     if(select1.children.item(i).getAttribute('value') === obj.zigbee.channel) {
@@ -154,13 +156,25 @@
                     <div class='list-h flex clear'>
                         <div class='grid3'>Server</div>
                         <div class='grid7 text-right text-heavy-gray font16'>
-                            <input type="text" class='input-txt' name="server" placeholder='0.uk.pool.ntp.org' id="server">
+                            <input type="text" class='input-txt' name="server" placeholder='mqtt://mqtt.eclipseprojects.io' id="server">
                         </div>
                     </div>
                     <div class='list-h flex clear'>
                         <div class='grid3'>Port</div>
                         <div class='grid7 text-right text-heavy-gray font16'>
-                            <input type="text" class='input-txt' name="port" placeholder='CST-8' id="port">
+                            <input type="text" class='input-txt' name="port" placeholder='1883' id="port">
+                        </div>
+                    </div>
+                    <div class='list-h flex clear'>
+                        <div class='grid3'>Username</div>
+                        <div class='grid7 text-right text-heavy-gray font16'>
+                            <input type="text" class='input-txt' name="mqtt_username" placeholder='' id="mqtt_username">
+                        </div>
+                    </div>
+                    <div class='list-h flex clear'>
+                        <div class='grid3'>Password</div>
+                        <div class='grid7 text-right text-heavy-gray font16'>
+                            <input type="text" class='input-txt' name="mqtt_password" placeholder='' id="mqtt_password">
                         </div>
                     </div>
                 </div>
