@@ -1,10 +1,6 @@
 #ifndef APP_DB_H
 #define APP_DB_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************/
 /***        include files                                                   ***/
 /******************************************************************************/
@@ -19,84 +15,77 @@ extern "C" {
 /***        type definitions                                                ***/
 /******************************************************************************/
 
-typedef struct ts_wsdcgq11lm
+typedef struct WSDCGQ11LM
 {
     uint8_t u8Ep;
     int16_t i16Temperature;
     int16_t i16Humidity;
     int16_t i16Pressure;
-} ts_wsdcgq11lm;
+} WSDCGQ11LM;
 
-typedef struct ts_rtcgq11lm
+typedef struct RTCGQ11LM
 {
     uint8_t  u8Ep;
     uint8_t  u8Occupancy;
     uint16_t u16Illuminance;
-} ts_rtcgq11lm;
+} RTCGQ11LM;
 
-typedef struct ts_light
+typedef struct Light
 {
     uint8_t  u8Ep;
     uint8_t  u8State;
-} ts_light;
+} Light;
 
-typedef struct ts_sensor
+typedef struct Sensor
 {
     uint8_t u8Ep;
     int16_t i16Temperature;
     int16_t i16Humidity;
-} ts_sensor;
+} Sensor;
 
-typedef struct device_node_t
-{
+typedef struct DeviceNode {
     uint64_t u64IeeeAddr;
     uint16_t u16NwkAddr;
     uint8_t  u8Type;
     uint8_t  au8ModelId[33];
     uint8_t  au8VendorId[33];
-    union
-    {
-        ts_wsdcgq11lm wsdcgq11lm;
-        ts_rtcgq11lm  rtcgq11lm;
-        ts_light      light;
-        ts_sensor     sensor;
-    } device_data;
-} device_node_t;
+    union {
+        WSDCGQ11LM wsdcgq11lm;
+        RTCGQ11LM  rtcgq11lm;
+        Light      light;
+        Sensor     sensor;
+    } deviceData;
+} DeviceNode;
 
-typedef struct brige_node_t
-{
-    uint16_t nwk_addr;
-    uint64_t mac_addr;
-    uint16_t pan_id;
-    uint64_t ex_pan_id;
+typedef struct BrigeNode {
+    uint16_t nwkAddr;
+    uint64_t macAddr;
+    uint16_t panId;
+    uint64_t exPanId;
     uint8_t channel;
-} brige_node_t;
+} BrigeNode;
 
 /******************************************************************************/
 /***        exported variables                                              ***/
 /******************************************************************************/
 
-extern brige_node_t brige_node;
+extern BrigeNode brigeNode;
 
 /******************************************************************************/
 /***        exported functions                                              ***/
 /******************************************************************************/
 
-void app_db_init(void);
+void appDataBaseInit(void);
 
-void app_db_save(void);
+void appDataBaseSave(void);
 
-void app_db_recover(void);
+void appDataBaseRecover(void);
 
-device_node_t * find_device_by_nwkaddr(uint16_t u16NwkAddr);
+DeviceNode * findDeviceByNwkaddr(uint16_t u16NwkAddr);
 
-device_node_t * find_device_by_ieeeaddr(uint64_t u64IeeeAddr);
+DeviceNode * findDeviceByIeeeaddr(uint64_t u64IeeeAddr);
 
-device_node_t * get_empty_device(void);
-
-#ifdef __cplusplus
-}
-#endif
+DeviceNode * getEmptyDevice(void);
 
 #endif
 /******************************************************************************/

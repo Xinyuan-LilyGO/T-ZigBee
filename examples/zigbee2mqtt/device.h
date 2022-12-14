@@ -1,10 +1,6 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************/
 /***        include files                                                   ***/
 /******************************************************************************/
@@ -28,40 +24,42 @@ extern "C" {
 /***        exported functions                                              ***/
 /******************************************************************************/
 
-void wsdcgq11lm_add(uint64_t u64IeeeAddr);
+void wsdcgq11lmAdd(uint64_t u64IeeeAddr);
 
-void wsdcgq11lm_report(uint64_t u64IeeeAddr,
-                       int16_t  i16Temperature,
-                       int16_t  i16Humidity,
-                       int16_t  i16Pressure);
+void wsdcgq11lmReport(
+    uint64_t u64IeeeAddr,
+    int16_t  i16Temperature,
+    int16_t  i16Humidity,
+    int16_t  i16Pressure
+);
 
-void wsdcgq11lm_delete(uint64_t u64IeeeAddr);
+void wsdcgq11lmDelete(uint64_t u64IeeeAddr);
 
-void rtcgq11lm_add(uint64_t u64IeeeAddr);
+void rtcgq11lmAdd(uint64_t u64IeeeAddr);
 
-void rtcgq11lm_report(uint64_t u64IeeeAddr,
-                      int8_t   u8Occupancy,
-                      uint16_t u16Illuminance);
+void rtcgq11lmReport(
+    uint64_t u64IeeeAddr,
+    int8_t   u8Occupancy,
+    uint16_t u16Illuminance
+);
 
-void rtcgq11lm_delete(uint64_t u64IeeeAddr);
+void rtcgq11lmDelete(uint64_t u64IeeeAddr);
 
-void lilygo_light_add(uint64_t u64IeeeAddr);
+void lilygoLightAdd(uint64_t u64IeeeAddr);
 
-void lilygo_light_delete(uint64_t u64IeeeAddr);
+void lilygoLightDelete(uint64_t u64IeeeAddr);
 
-void lilygo_light_report(uint64_t u64IeeeAddr, uint8_t u8OnOff);
+void lilygoLightReport(uint64_t u64IeeeAddr, uint8_t u8OnOff);
 
-void lilygo_sensor_add(uint64_t u64IeeeAddr);
+void lilygoSensorAdd(uint64_t u64IeeeAddr);
 
-void lilygo_sensor_report(uint64_t u64IeeeAddr,
-                          int16_t  i16Temperature,
-                          int16_t  i16Humidity);
+void lilygoSensorReport(
+    uint64_t u64IeeeAddr,
+    int16_t  i16Temperature,
+    int16_t  i16Humidity
+);
 
-void lilygo_sensor_delete(uint64_t u64IeeeAddr);
-
-#ifdef __cplusplus
-}
-#endif
+void lilygoSensorDelete(uint64_t u64IeeeAddr);
 
 #endif
 /******************************************************************************/

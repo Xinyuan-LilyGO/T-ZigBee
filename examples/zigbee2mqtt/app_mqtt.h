@@ -1,10 +1,6 @@
 #ifndef APP_MQTT_H
 #define APP_MQTT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************/
 /***        include files                                                   ***/
 /******************************************************************************/
@@ -29,15 +25,11 @@ typedef void (*sub_topic_handle_t)(const char *topic, const char *data);
 /***        exported functions                                              ***/
 /******************************************************************************/
 
-void mqtt_app_start(void);
-void app_mqtt_client_subscribe(const char *topic, int qos, sub_topic_handle_t handle);
-void app_mqtt_client_publish(const char *topic, const char *data);
-bool get_mqtt_status(void);
-void mqtt_app_stop(void);
-
-#ifdef __cplusplus
-}
-#endif
+void appMQTTStart(void);
+void appMQTTSubscribe(const char *topic, int qos, sub_topic_handle_t handle);
+void appMQTTPublish(const char *topic, const char *data);
+bool appGetMQTTStatus(void);
+void appMQTTStop(void);
 
 #endif
 /******************************************************************************/

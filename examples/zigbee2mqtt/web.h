@@ -1,3 +1,4 @@
 #pragma once
 
-void web_init(void);
+void webInit(void);
+void webLoop();
