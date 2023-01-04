@@ -131,7 +131,7 @@ static void getStatus() {
     zigbeeObj["channel"] = brigeNode.channel;
 
     JsonObject mqttObj = rsp.createNestedObject("mqtt");
-    mqttObj["status"] = appGetMQTTStatus() ? "connected" : "disconnect";
+    mqttObj["status"] = mqtt.connected() ? "connected" : "disconnect";
     mqttObj["server"] = mqttServer;
     mqttObj["port"] = mqttPort;
     mqttObj["username"] = mqttUsername;
@@ -240,8 +240,8 @@ static void handleConfig() {
         WiFi.begin(staSSID.c_str(), staPassword.c_str());
     }
     if (mqttFlag) {
-        appMQTTStop();
-        appMQTTStart();
+        mqtt.stop();
+        mqtt.connect(mqttServer.c_str(), mqttPort);
     }
 }
 

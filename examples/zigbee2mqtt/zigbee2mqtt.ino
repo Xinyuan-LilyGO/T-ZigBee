@@ -25,6 +25,7 @@
 #include "lwip/sys.h"
 #include "LittleFS.h"
 #include "ArduinoJson.h"
+#include <cJSON.h>
 
 #include "app_mqtt.h"
 #include "zbhci.h"
@@ -46,6 +47,8 @@ String mqttServer = "";
 uint32_t mqttPort = 0;
 String mqttUsername = "";
 String mqttPassword = "";
+
+// MQTTClient mqtt;
 
 OneButton btn = OneButton(
     CONFIG_USR_BUTTON_PIN, /** Input pin for the button */
@@ -70,7 +73,8 @@ void setup() {
     appNVSInit();
     appWiFiInit();
     webInit();
-    // appMQTTStart();
+    mqtt.attachConnectedEvent(appDataBaseRecover);
+    mqtt.subscribe("zigbee2mqtt/bridge/request/+", appHandlrMqttPermitJoin);
     appDataBaseInit();
 
     msg_queue = xQueueCreate(10, sizeof(ts_HciMsg));
@@ -141,12 +145,12 @@ void ledTask(void *pvParameters) {
             delay(1000);
             digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
             delay(1000);
-        } else if (staStatus == "running" && !appGetMQTTStatus()) {
+        } else if (staStatus == "running" && !mqtt.connected()) {
             digitalWrite(CONFIG_BLUE_LIGHT_PIN, LOW);
             delay(3000);
             digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
             delay(3000);
-        } else if (staStatus == "running" && appGetMQTTStatus()) {
+        } else if (staStatus == "running" && mqtt.connected()) {
             digitalWrite(CONFIG_BLUE_LIGHT_PIN, HIGH);
             delay(100);
         }
@@ -253,7 +257,7 @@ void onWiFiEvent(WiFiEvent_t event) {
             staStatus = "running";
             Serial.print("Obtained IP address: ");
             Serial.println(WiFi.localIP());
-            appMQTTStart();
+            mqtt.connect(mqttServer.c_str(), mqttPort);
             break;
         case ARDUINO_EVENT_WIFI_STA_LOST_IP:
             Serial.println("Lost IP address and IP address is reset to 0");
@@ -642,4 +646,34 @@ void appHandleZCLreportMsgRcv(ts_MsgZclReportMsgRcvPayload *payload) {
         default:
         break;
     }
+}
+
+static void appHandlrMqttPermitJoin(const char *topic, const char *data) {
+    if (!data) return ;
+
+    cJSON *json = cJSON_Parse(data);
+    if (!json) {
+        Serial.println("json error\n");
+        return ;
+    }
+
+    cJSON *value = cJSON_GetObjectItem(json, "value");
+    cJSON *time  = cJSON_GetObjectItem(json, "time");
+    if (value && time) {
+        if (value->valueint && time->valueint > 0x00 && time->valueint < 0xFF) {
+            zbhci_MgmtPermitJoinReq(0xFFFC, time->valueint, 1);
+        } else if (value->valueint && time->valueint <= 0) {
+            zbhci_MgmtPermitJoinReq(0xFFFC, 0x00, 1);
+        } else if (value->valueint && time->valueint >= 0xFF) {
+            zbhci_MgmtPermitJoinReq(0xFFFC, 0xFF, 1);
+        }
+    } else if (value && !time) {
+        if (value->valueint) {
+            zbhci_MgmtPermitJoinReq(0xFFFC, 0xFF, 1);
+        } else {
+            zbhci_MgmtPermitJoinReq(0xFFFC, 0x00, 1);
+        }
+    }
+
+    cJSON_Delete(json);
 }

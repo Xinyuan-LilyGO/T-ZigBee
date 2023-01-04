@@ -119,21 +119,24 @@ void wsdcgq11lmDelete(uint64_t u64IeeeAddr)
         "homeassistant/sensor/%s/humidity/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic, "");
+    mqtt.publish(topic, "");
 
     memset(topic, 0, sizeof(topic));
     snprintf(topic, sizeof(topic) - 1,
         "homeassistant/sensor/%s/temperature/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic, "");
+    mqtt.publish(topic, "");
 
     memset(topic, 0, sizeof(topic));
     snprintf(topic, sizeof(topic) - 1,
         "homeassistant/sensor/%s/pressure/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic, "");
+    mqtt.publish(topic, "");
 }
 
 
@@ -155,7 +158,8 @@ void wsdcgq11lmReport(
     cJSON_AddNumberToObject(json, "pressure",    (double)i16Pressure);
     char *str = cJSON_Print(json);
 
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
     cJSON_Delete(json);
 }
 
@@ -222,14 +226,16 @@ void rtcgq11lmDelete(uint64_t u64IeeeAddr) {
         "homeassistant/sensor/%s/illuminance_lux/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic ,"");
+    mqtt.publish(topic, "");
 
     memset(topic, 0, sizeof(topic));
     snprintf(topic, sizeof(topic) - 1,
         "homeassistant/binary_sensor/%s/occupancy/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic, "");
+    mqtt.publish(topic, "");
 }
 
 
@@ -249,7 +255,8 @@ void rtcgq11lmReport(
     cJSON_AddNumberToObject(json, "illuminance", u16Illuminance);
     char *str = cJSON_Print(json);
 
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
     cJSON_Delete(json);
 }
 
@@ -291,8 +298,9 @@ void lilygoLightAdd(uint64_t u64IeeeAddr) {
     cJSON_AddStringToObject(json, "unique_id", ieeeaddr_str);
 
     str = cJSON_Print(json);
-    appMQTTPublish(topic ,str);
-    appMQTTSubscribe(subTopics, 0, handleLilygoLight);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
+    mqtt.subscribe(subTopics, handleLilygoLight);
     ESP_LOGI(
         "Zigbee2MQTT",
         "Successfully interviewed '%#016llx', device has successfully been paired",
@@ -318,7 +326,8 @@ void lilygoLightDelete(uint64_t u64IeeeAddr) {
         "homeassistant/light/%s/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic, "");
+    mqtt.publish(topic, "");
 }
 
 
@@ -340,7 +349,8 @@ void lilygoLightReport(uint64_t u64IeeeAddr, uint8_t u8OnOff) {
     // cJSON_AddStringToObject(json, "state", u8OnOff ? "ON": "OFF");
     char *str = cJSON_Print(json);
     // printf("topic: %s, data: %s\n", topic, str);
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic ,str);
     cJSON_Delete(json);
 }
 
@@ -407,14 +417,16 @@ void lilygoSensorDelete(uint64_t u64IeeeAddr) {
         "homeassistant/sensor/%s/humidity/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic, "");
+    mqtt.publish(topic, "");
 
     memset(topic, 0, sizeof(topic));
     snprintf(topic, sizeof(topic) - 1,
         "homeassistant/sensor/%s/temperature/config",
         ieeeaddr_str
     );
-    appMQTTPublish(topic ,"");
+    // appMQTTPublish(topic, "");
+     mqtt.publish(topic, "");
 }
 
 
@@ -434,7 +446,8 @@ void lilygoSensorReport(
     cJSON_AddNumberToObject(json, "humidity",    (double)i16Humidity/100);
     char *str = cJSON_Print(json);
 
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
     cJSON_Delete(json);
 }
 
@@ -482,7 +495,8 @@ static void subHumidity(uint64_t u64IeeeAddr, cJSON *json) {
     );
 
     // push message
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
 }
 
 
@@ -526,7 +540,8 @@ static void subTemperature(uint64_t u64IeeeAddr, cJSON *json) {
     );
 
     // push message
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
 }
 
 
@@ -570,7 +585,8 @@ static void subPressure(uint64_t u64IeeeAddr, cJSON *json) {
     );
 
     // push message
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
 }
 
 
@@ -615,7 +631,8 @@ static void subOccupancy(uint64_t u64IeeeAddr, cJSON *json) {
     );
 
     // push message
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
 }
 
 
@@ -659,7 +676,8 @@ static void subIlluminanceLux(uint64_t u64IeeeAddr, cJSON *json) {
     );
 
     // push message
-    appMQTTPublish(topic ,str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
 }
 
 
