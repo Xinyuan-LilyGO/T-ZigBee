@@ -443,6 +443,12 @@ void appHandleLeaveIndication(ts_MsgLeaveIndicationPayload *payload) {
         {
             lilygoSensorDelete(device->u64IeeeAddr);
         }
+        else if (!strncmp((const char *)device->au8ModelId,
+                            "ESP32C6.Light",
+                            strlen("ESP32C6.Light")))
+        {
+            espressifLightDelete(device->u64IeeeAddr);
+        }
         memset(device, 0, sizeof(DeviceNode));
         appDataBaseSave();
     }
@@ -492,6 +498,25 @@ void appHandleZCLreportMsgRcv(ts_MsgZclReportMsgRcvPayload *payload) {
                         appDataBaseSave();
                         lilygoSensorAdd(device->u64IeeeAddr);
                     }
+                    else if (!strncmp((const char *)payload->asAttrList[i].uAttrData.au8AttrData,
+                                       "ESP32C6.Light",
+                                       strlen("ESP32C6.Light")))
+                    {
+                        appDataBaseSave();
+                        espressifLightAdd(device->u64IeeeAddr);
+                        // The configure method below is needed to make the device reports on/off state changes
+                        // when the device is controlled manually through the button on it.
+                        zbhci_BindingReq(
+                            device->u64IeeeAddr,
+                            1,
+                            0x0006,
+                            0x03,
+                            (ts_DstAddr) {
+                                .u64DstAddr = brigeNode.macAddr
+                            },
+                            1
+                        );
+                    }
                 }
             }
         break;
@@ -503,9 +528,8 @@ void appHandleZCLreportMsgRcv(ts_MsgZclReportMsgRcvPayload *payload) {
                 if (payload->asAttrList[i].u16AttrID == 0x0000)
                 {
                     device->deviceData.light.u8State = payload->asAttrList[i].uAttrData.u8AttrData;
-                    if (!strncmp((const char *)device->au8ModelId,
-                                 "LILYGO.Light",
-                                 strlen("LILYGO.Light")))
+                    if (!strncmp((const char *)device->au8ModelId, "LILYGO.Light", strlen("LILYGO.Light")) || \
+                        !strncmp((const char *)device->au8ModelId, "ESP32C6.Light", strlen("ESP32C6.Light")))
                     {
                         lilygoLightReport(
                             device->u64IeeeAddr,
@@ -699,6 +723,25 @@ void appHandleZCLReadResponse(ts_MsgZclAttrReadRspPayload *payload) {
                         appDataBaseSave();
                         lilygoSensorAdd(device->u64IeeeAddr);
                     }
+                   else if (!strncmp((const char *)payload->asAttrReadList[i].uAttrData.au8AttrData,
+                                      "ESP32C6.Light",
+                                      strlen("ESP32C6.Light")))
+                    {
+                        appDataBaseSave();
+                        espressifLightAdd(device->u64IeeeAddr);
+                        // The configure method below is needed to make the device reports on/off state changes
+                        // when the device is controlled manually through the button on it.
+                        zbhci_BindingReq(
+                            device->u64IeeeAddr,
+                            1,
+                            0x0006,
+                            0x03,
+                            (ts_DstAddr) {
+                                .u64DstAddr = brigeNode.macAddr
+                            },
+                            1
+                        );
+                    }
                 }
             }
         break;
@@ -710,7 +753,8 @@ void appHandleZCLReadResponse(ts_MsgZclAttrReadRspPayload *payload) {
                 if (payload->asAttrReadList[i].u16AttrID == 0x0000)
                 {
                     device->deviceData.light.u8State = payload->asAttrReadList[i].uAttrData.u8AttrData;
-                    if (!strncmp((const char *)device->au8ModelId, "LILYGO.Light", strlen("LILYGO.Light")))
+                    if (!strncmp((const char *)device->au8ModelId, "LILYGO.Light", strlen("LILYGO.Light")) || \
+                        !strncmp((const char *)device->au8ModelId, "ESP32C6.Light", strlen("ESP32C6.Light")))
                     {
                         lilygoLightReport(
                             device->u64IeeeAddr,

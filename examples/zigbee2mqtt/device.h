@@ -51,6 +51,12 @@ void lilygoLightDelete(uint64_t u64IeeeAddr);
 
 void lilygoLightReport(uint64_t u64IeeeAddr, uint8_t u8OnOff);
 
+void espressifLightAdd(uint64_t u64IeeeAddr);
+
+void espressifLightDelete(uint64_t u64IeeeAddr);
+
+void espressifLightReport(uint64_t u64IeeeAddr, uint8_t u8OnOff);
+
 void lilygoSensorAdd(uint64_t u64IeeeAddr);
 
 void lilygoSensorReport(

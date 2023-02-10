@@ -355,6 +355,99 @@ void lilygoLightReport(uint64_t u64IeeeAddr, uint8_t u8OnOff) {
 }
 
 
+void espressifLightAdd(uint64_t u64IeeeAddr) {
+    char ieeeaddr_str[20] = { 0 };
+    char topic[128] = { 0 };
+    char topic_head[128] = { 0 };
+    char subTopics[128] = { 0 };
+    cJSON *json = cJSON_CreateObject();
+    cJSON *device = cJSON_CreateObject();
+    cJSON *identifiers = cJSON_CreateArray();
+    char *str = NULL;
+
+    if (!json) return ;
+    if (!device) goto OUT;
+    if (!identifiers) goto OUT1;
+
+    snprintf(ieeeaddr_str, sizeof(ieeeaddr_str) - 1, "0x%016llx", u64IeeeAddr);
+    snprintf(topic_head, sizeof(topic_head) - 1,
+        "homeassistant/light/0x%016llx",
+        u64IeeeAddr
+    );
+    snprintf(topic, sizeof(topic) - 1, "%s/config", topic_head);\
+    snprintf(subTopics, sizeof(subTopics) - 1, "%s/set", topic_head);
+
+    cJSON_AddItemToArray(identifiers, cJSON_CreateString(ieeeaddr_str));
+    cJSON_AddItemToObject(device, "identifiers", identifiers);
+    cJSON_AddStringToObject(device, "manufacturer", "Espressif");
+    cJSON_AddStringToObject(device, "model", "Espressif ordinary light");
+    cJSON_AddStringToObject(device, "name", "Espressif.Light");
+    cJSON_AddStringToObject(device, "sw_version", "0.1.0");
+    cJSON_AddItemToObject(json, "device", device);
+    cJSON_AddStringToObject(json, "~", topic_head);
+    cJSON_AddStringToObject(json, "name", "Espressif.Light");
+    cJSON_AddStringToObject(json, "cmd_t", "~/set");
+    cJSON_AddStringToObject(json, "stat_t", "~/state");
+    cJSON_AddStringToObject(json, "schema", "json");
+    cJSON_AddStringToObject(json, "unique_id", ieeeaddr_str);
+
+    str = cJSON_Print(json);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic, str);
+    mqtt.subscribe(subTopics, handleLilygoLight);
+    ESP_LOGI(
+        "Zigbee2MQTT",
+        "Successfully interviewed '%#016llx', device has successfully been paired",
+        u64IeeeAddr
+    );
+OUT:
+    cJSON_Delete(json);
+    return;
+OUT1:
+    cJSON_Delete(json);
+    cJSON_Delete(device);
+}
+
+
+void espressifLightDelete(uint64_t u64IeeeAddr) {
+    char ieeeaddr_str[20] = { 0 };
+    char topic[128] = { 0 };
+
+    snprintf(ieeeaddr_str, sizeof(ieeeaddr_str) - 1, "0x%016llx", u64IeeeAddr);
+
+    memset(topic, 0, sizeof(topic));
+    snprintf(topic, sizeof(topic) - 1,
+        "homeassistant/light/%s/config",
+        ieeeaddr_str
+    );
+    // appMQTTPublish(topic, "");
+    mqtt.publish(topic, "");
+}
+
+
+void espressifLightReport(uint64_t u64IeeeAddr, uint8_t u8OnOff) {
+    char topic[128] = { 0 };
+
+    cJSON *json = cJSON_CreateObject();
+    if (!json) return ;
+
+    // printf("lilygoLightReport %d\n", u8OnOff);
+
+    snprintf(topic, sizeof(topic) - 1, "homeassistant/light/0x%016llx/state", u64IeeeAddr);
+    if (u8OnOff == 0x01) {
+        cJSON_AddStringToObject(json, "state", "ON");
+    } else {
+        cJSON_AddStringToObject(json, "state", "OFF");
+    }
+
+    // cJSON_AddStringToObject(json, "state", u8OnOff ? "ON": "OFF");
+    char *str = cJSON_Print(json);
+    // printf("topic: %s, data: %s\n", topic, str);
+    // appMQTTPublish(topic, str);
+    mqtt.publish(topic ,str);
+    cJSON_Delete(json);
+}
+
 void lilygoSensorAdd(uint64_t u64IeeeAddr) {
     char ieeeaddr_str[20] = { 0 };
     cJSON *json = cJSON_CreateObject();
