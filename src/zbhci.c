@@ -2729,9 +2729,9 @@ static void zbhci_UnpackZclAttrReadRspPayload(ts_MsgZclAttrReadRspPayload *psPay
             u16Offset += psPayload->asAttrReadList[n].u16DataLen;
         }
 
-        u16DataLen = zcl_getAttrSize(psPayload->asAttrReadList[n].u8DataType, &pu8Payload[u16Offset]);
-        memcpy(psPayload->asAttrReadList[n].uAttrData.au8AttrData, &pu8Payload[u16Offset], u16DataLen);
-        u16Offset += u16DataLen;
+        // u16DataLen = zcl_getAttrSize(psPayload->asAttrReadList[n].u8DataType, &pu8Payload[u16Offset]);
+        // memcpy(psPayload->asAttrReadList[n].uAttrData.au8AttrData, &pu8Payload[u16Offset], u16DataLen);
+        // u16Offset += u16DataLen;
     }
 }
 
