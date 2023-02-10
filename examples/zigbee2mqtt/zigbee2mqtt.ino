@@ -161,7 +161,6 @@ void ledTask(void *pvParameters) {
 
 void zbhciTask(void *pvParameters) {
     ts_HciMsg sHciMsg;
-    DeviceNode *device = NULL;
 
     while (1) {
         bzero(&sHciMsg, sizeof(sHciMsg));
@@ -185,6 +184,10 @@ void zbhciTask(void *pvParameters) {
 
                 case ZBHCI_CMD_ZCL_REPORT_MSG_RCV:
                     appHandleZCLreportMsgRcv(&sHciMsg.uPayload.sZclReportMsgRcvPayload);
+                break;
+
+                case ZBHCI_CMD_ZCL_ATTR_READ_RSP:
+                    appHandleZCLReadResponse(&sHciMsg.uPayload.sZclAttrReadRspPayload);
                 break;
 
                 default:
@@ -401,6 +404,9 @@ void appHandleDeviceAnnouncementIndication(ts_MsgNodesDevAnnceRspPayload *payloa
     device->u16NwkAddr  = payload->u16NwkAddr;
     device->u64IeeeAddr = payload->u64IEEEAddr;
     device->u8Type      = payload->u8Capability;
+    // When the device is connected to the network, read its model id
+    uint16_t au16AttrList[1] = {0x0005};
+    zbhci_ZclAttrRead(0x02, (ts_DstAddr) {.u16DstAddr = payload->u16NwkAddr}, 1, 1, 0, 0x0000, 1, au16AttrList);
 }
 
 
@@ -647,6 +653,212 @@ void appHandleZCLreportMsgRcv(ts_MsgZclReportMsgRcvPayload *payload) {
         break;
     }
 }
+
+
+void appHandleZCLReadResponse(ts_MsgZclAttrReadRspPayload *payload) {
+    DeviceNode *device = NULL;
+    device = findDeviceByNwkaddr(payload->u16SrcAddr);
+    if (device == NULL) {
+        return ;
+    }
+    switch (payload->u16ClusterId) {
+        case 0x0000: /* Basic Cluster */
+            for (size_t i = 0; i < payload->u8AttrNum; i++) {
+                if (payload->asAttrReadList[i].u16AttrID == 0x0005) {
+                    printf("attr\n");
+                    memcpy(
+                        device->au8ModelId,
+                        payload->asAttrReadList[i].uAttrData.au8AttrData,
+                        payload->asAttrReadList[i].u16DataLen
+                    );
+                    if (!strncmp((const char *)payload->asAttrReadList[i].uAttrData.au8AttrData,
+                                 "lumi.sensor_motion.aq2",
+                                 strlen("lumi.sensor_motion.aq2")))
+                    {
+                        appDataBaseSave();
+                        rtcgq11lmAdd(device->u64IeeeAddr);
+                    }
+                    else if (!strncmp((const char *)payload->asAttrReadList[i].uAttrData.au8AttrData,
+                                      "lumi.weather",
+                                      strlen("lumi.weather")))
+                    {
+                        appDataBaseSave();
+                        wsdcgq11lmAdd(device->u64IeeeAddr);
+                    }
+                    else if (!strncmp((const char *)payload->asAttrReadList[i].uAttrData.au8AttrData,
+                                        "LILYGO.Light",
+                                        strlen("LILYGO.Light")))
+                    {
+                        appDataBaseSave();
+                        lilygoLightAdd(device->u64IeeeAddr);
+                    }
+                    else if (!strncmp((const char *)payload->asAttrReadList[i].uAttrData.au8AttrData,
+                                      "LILYGO.Sensor",
+                                      strlen("LILYGO.Sensor")))
+                    {
+                        appDataBaseSave();
+                        lilygoSensorAdd(device->u64IeeeAddr);
+                    }
+                }
+            }
+        break;
+
+        case 0x0006:
+        {
+            for (size_t i = 0; i < payload->u8AttrNum; i++)
+            {
+                if (payload->asAttrReadList[i].u16AttrID == 0x0000)
+                {
+                    device->deviceData.light.u8State = payload->asAttrReadList[i].uAttrData.u8AttrData;
+                    if (!strncmp((const char *)device->au8ModelId, "LILYGO.Light", strlen("LILYGO.Light")))
+                    {
+                        lilygoLightReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.light.u8State
+                        );
+                    }
+                }
+            }
+        }
+        break;
+
+        case 0x0400: /* Illuminance Measurement Cluster */
+        {
+            for (size_t i = 0; i < payload->u8AttrNum; i++)
+            {
+                if (payload->asAttrReadList[i].u16AttrID == 0x0000)
+                {
+                    device->deviceData.rtcgq11lm.u16Illuminance = payload->asAttrReadList[i].uAttrData.u16AttrData;
+                    if (!strncmp((const char *)device->au8ModelId,
+                                 "lumi.sensor_motion.aq2",
+                                 strlen("lumi.sensor_motion.aq2")))
+                    {
+                        rtcgq11lmReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.rtcgq11lm.u8Occupancy,
+                            device->deviceData.rtcgq11lm.u16Illuminance
+                        );
+                    }
+                }
+            }
+        }
+        break;
+
+        case 0x0402: /* Temperature Measurement Cluster */
+        {
+            for (size_t i = 0; i < payload->u8AttrNum; i++)
+            {
+                if (payload->asAttrReadList[i].u16AttrID == 0x0000)
+                {
+                    device->deviceData.wsdcgq11lm.i16Temperature = (int16_t)payload->asAttrReadList[i].uAttrData.u16AttrData;
+                    if (!strncmp((const char *)device->au8ModelId,
+                                 "lumi.weather",
+                                 strlen("lumi.weather")))
+                    {
+                        wsdcgq11lmReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.wsdcgq11lm.i16Temperature,
+                            device->deviceData.wsdcgq11lm.i16Humidity,
+                            device->deviceData.wsdcgq11lm.i16Pressure
+                        );
+                    }
+                    else if (!strncmp((const char *)device->au8ModelId,
+                                      "LILYGO.Sensor",
+                                      strlen("LILYGO.Sensor")))
+                    {
+                        lilygoSensorReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.sensor.i16Temperature,
+                            device->deviceData.sensor.i16Humidity
+                        );
+                    }
+                }
+            }
+        }
+        break;
+
+        case 0x0403:/* Pressure Measurement Cluster */
+        {
+            for (size_t i = 0; i < payload->u8AttrNum; i++)
+            {
+                if (payload->asAttrReadList[i].u16AttrID == 0x0000)
+                {
+                    device->deviceData.wsdcgq11lm.i16Pressure = (int16_t)payload->asAttrReadList[i].uAttrData.u16AttrData;
+                    if (!strncmp((const char *)device->au8ModelId,
+                                 "lumi.weather",
+                                 strlen("lumi.weather")))
+                    {
+                        wsdcgq11lmReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.wsdcgq11lm.i16Temperature,
+                            device->deviceData.wsdcgq11lm.i16Humidity,
+                            device->deviceData.wsdcgq11lm.i16Pressure
+                        );
+                    }
+                }
+            }
+        }
+        break;
+
+        case 0x0405: /* Relative Humidity Measurement Cluster */
+        {
+            for (size_t i = 0; i < payload->u8AttrNum; i++)
+            {
+                if (payload->asAttrReadList[i].u16AttrID == 0x0000)
+                {
+                    device->deviceData.wsdcgq11lm.i16Humidity = (int16_t)payload->asAttrReadList[i].uAttrData.u16AttrData;
+                    if (!strncmp((const char *)device->au8ModelId,
+                                 "lumi.weather",
+                                 strlen("lumi.weather")))
+                    {
+                        wsdcgq11lmReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.wsdcgq11lm.i16Temperature,
+                            device->deviceData.wsdcgq11lm.i16Humidity,
+                            device->deviceData.wsdcgq11lm.i16Pressure
+                        );
+                    }
+                    else if (!strncmp((const char *)device->au8ModelId,
+                                      "LILYGO.Sensor",
+                                      strlen("LILYGO.Sensor")))
+                    {
+                        lilygoSensorReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.sensor.i16Temperature,
+                            device->deviceData.sensor.i16Humidity
+                        );
+                    }
+                }
+            }
+        }
+        break;
+
+        case 0x0406: /* Occupancy Sensing Cluster */
+        {
+            for (size_t i = 0; i < payload->u8AttrNum; i++)
+            {
+                if (payload->asAttrReadList[i].u16AttrID == 0x0000) {
+                    device->deviceData.rtcgq11lm.u8Occupancy = payload->asAttrReadList[i].uAttrData.u8AttrData;
+                    if (!strncmp((const char *)device->au8ModelId,
+                                 "lumi.sensor_motion.aq2",
+                                 strlen("lumi.sensor_motion.aq2")))
+                    {
+                        rtcgq11lmReport(
+                            device->u64IeeeAddr,
+                            device->deviceData.rtcgq11lm.u8Occupancy,
+                            device->deviceData.rtcgq11lm.u16Illuminance
+                        );
+                    }
+                }
+            }
+        }
+        break;
+
+        default:
+        break;
+    }
+}
+
 
 static void appHandlrMqttPermitJoin(const char *topic, const char *data) {
     if (!data) return ;
