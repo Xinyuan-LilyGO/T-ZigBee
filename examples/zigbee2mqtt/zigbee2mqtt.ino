@@ -260,6 +260,7 @@ void onWiFiEvent(WiFiEvent_t event) {
             staStatus = "running";
             Serial.print("Obtained IP address: ");
             Serial.println(WiFi.localIP());
+            mqtt.setUsernamePassword(mqttUsername.c_str(), mqttPassword.c_str());
             mqtt.connect(mqttServer.c_str(), mqttPort);
             break;
         case ARDUINO_EVENT_WIFI_STA_LOST_IP:
